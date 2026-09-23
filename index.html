@@ -2,80 +2,127 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sürpriz!</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { width: 100%; height: 100%; background-color: #000; font-family: monospace; overflow: hidden; color: #fff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        body, html { width: 100%; height: 100%; background-color: #000; font-family: 'Courier New', Courier, monospace; overflow: hidden; color: #fff; }
+        
         .phase { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         .active { display: flex; }
+
+        /* EVRE 1: Pembe Masum Buton */
         #phase1 { background-color: #ffb6c1; }
-        .pink-btn { padding: 20px 40px; font-size: 24px; font-weight: bold; color: #fff; background-color: #ff1493; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: transform 0.1s; }
-        .pink-btn:active { transform: scale(0.95); }
-        #phase2 { background-color: #050505; color: #00ff00; padding: 20px; align-items: flex-start; justify-content: flex-start; text-align: left; }
-        .typewriter { font-size: 18px; line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
-        #phase3 { background-color: #000; position: relative; }
-        #jumpscare-img { width: 100%; height: 100%; object-fit: cover; }
-        .crack-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: url('https://i.ibb.co/L519p41/screen-crack.png') center/cover no-repeat; pointer-events: none; opacity: 0.8; }
-        #phase4 { background-color: #000; }
-        video { width: 100%; height: 100%; object-fit: contain; }
+        .pink-btn { padding: 25px 50px; font-size: 26px; font-weight: bold; color: #fff; background-color: #ff1493; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .pink-btn:active { transform: scale(0.9); }
+
+        /* ANALOG HORROR CRT EKRAN EFEKTİ */
+        .crt::after { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); z-index: 10; background-size: 100% 2px, 3px 100%; pointer-events: none; }
+
+        /* EVRE 2: Daktilo Ekranı */
+        #phase2 { background-color: #050000; color: #ff0000; padding: 25px; align-items: flex-start; justify-content: flex-start; text-align: left; }
+        .typewriter { font-size: 18px; line-height: 1.6; font-weight: bold; text-shadow: 2px 0 #000, -2px 0 #fff; }
+
+        /* EVRE 3: RESİM JUMPSCARE EKRANI */
+        #phase3 { background-color: #000; position: relative; overflow: hidden; }
+        .jumpscare-img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* EVRE 4: YOUTUBE VİDEO EKRANI */
+        #phase4 { background-color: #000; position: relative; overflow: hidden; }
+        #youtube-player { width: 100vw; height: 100vh; pointer-events: none; transform: scale(1.3); }
+
+        /* EVRE 5: ÇÖKME / HATA EKRANI */
         #phase5 { background: #fff; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: left; padding: 40px 20px; justify-content: flex-start; }
         .chrome-error { max-width: 600px; margin: 0 auto; }
         .chrome-error h1 { font-size: 22px; color: #5f6368; margin-bottom: 15px; font-weight: 500; }
         .chrome-error p { font-size: 14px; color: #5f6368; line-height: 1.5; margin-bottom: 10px; }
         .chrome-error .error-code { font-size: 11px; color: #5f6368; margin-top: 30px; text-transform: uppercase; }
-        @keyframes glitch { 0% { transform: translate(0) } 20% { transform: translate(-5px, 5px) } 40% { transform: translate(-5px, -5px) } 60% { transform: translate(5px, 5px) } 80% { transform: translate(5px, -5px) } 100% { transform: translate(0) } }
-        .glitch-effect { animation: glitch 0.1s infinite; filter: invert(1); }
+
+        /* AŞIRI ŞİDDETLİ GLİTCH EFEKTİ */
+        @keyframes extremeGlitch {
+            0% { transform: translate(0) scale(1); filter: invert(0) hue-rotate(0deg); }
+            20% { transform: translate(-20px, 20px) scale(1.1); filter: invert(1) hue-rotate(90deg); }
+            40% { transform: translate(-20px, -20px) scale(0.9); filter: contrast(500%); }
+            60% { transform: translate(20px, 20px) scale(1.2); filter: invert(1); }
+            80% { transform: translate(20px, -20px) scale(0.95); filter: hue-rotate(180deg); }
+            100% { transform: translate(0) scale(1); filter: invert(0); }
+        }
+        .extreme-glitch { animation: extremeGlitch 0.04s infinite; }
     </style>
 </head>
-<body>
+<body class="crt">
 
     <!-- EVRE 1: Pembe Buton -->
     <div id="phase1" class="phase active">
         <button class="pink-btn" onclick="startPrank()">DOKUN! ✨</button>
     </div>
 
-    <!-- EVRE 2: Daktilo / Ransom Ekranı -->
+    <!-- EVRE 2: Daktilo / Cihaz Bilgisi Ekranı -->
     <div id="phase2" class="phase">
         <div id="typewriter-text" class="typewriter"></div>
     </div>
 
-    <!-- EVRE 3: The Boiled One Jumpscare -->
+    <!-- EVRE 3: Resim Jumpscare Ekranı -->
     <div id="phase3" class="phase">
-        <img id="jumpscare-img" src="https://i.ibb.co/3zd5Lkx/boiled-one.jpg" alt="BOILED ONE">
-        <div class="crack-overlay"></div>
+        <img class="jumpscare-img" src="https://share.google/sOS6eBMdJnqCcrHWT" alt="Jumpscare Face">
     </div>
 
-    <!-- EVRE 4: Analog Horror Video -->
+    <!-- EVRE 4: YouTube Video Jumpscare Ekranı -->
     <div id="phase4" class="phase">
-        <video id="horror-video" src="https://assets.mixkit.co/videos/preview/mixkit-scary-glitch-and-noise-effects-41541-large.mp4" playsinline></video>
+        <div id="youtube-player"></div>
     </div>
 
-    <!-- EVRE 5: Fake Chrome Crash -->
+    <!-- EVRE 5: Fake Chrome Çökme Ekranı -->
     <div id="phase5" class="phase">
         <div class="chrome-error">
             <h1>Bu siteye erişilemiyor</h1>
-            <p><strong>espesp71237123.github.io</strong> bağlanmayı reddetti.</p>
+            <p><strong>espesp71237123.github.io</strong> yanıt vermeyi reddetti.</p>
             <p>Aşağıdakileri deneyin:</p>
             <ul>
                 <li>Bağlantıyı kontrol etme</li>
-                <li>Vekil sunucuyu ve güvenlik duvarını kontrol etme</li>
+                <li>Sistem belleğini ve ağ ayarlarını temizleme</li>
             </ul>
-            <div class="error-code">ERR_CONNECTION_CLOSED</div>
+            <div class="error-code">ERR_CRASHED_BY_SYSTEM</div>
         </div>
     </div>
 
+    <!-- YouTube API Script -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <script>
         let audioCtx;
+        let player;
 
-        function playBeep(freq, duration) {
+        // YouTube Oyuncusunu Hazırla
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                videoId: 'mXTYvRf3qew',
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'modestbranding': 1,
+                    'rel': 0,
+                    'showinfo': 0,
+                    'playsinline': 1
+                }
+            });
+        }
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playBeep(freq, duration, type='sawtooth') {
             try {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                initAudio();
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
+                osc.type = type;
                 osc.frequency.value = freq;
-                gain.gain.value = 0.3;
+                gain.gain.value = 0.4;
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
                 osc.start();
@@ -83,31 +130,38 @@
             } catch(e){}
         }
 
-        function playCrashSound() {
+        function playHorrorScream() {
             try {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                initAudio();
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
-                osc.type = 'square';
-                osc.frequency.value = 80;
-                gain.gain.value = 0.5;
+                osc.type = 'sawtooth';
+                
+                osc.frequency.setValueAtTime(3000, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 2.5);
+
+                gain.gain.setValueAtTime(1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2.5);
+
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
                 osc.start();
-                setTimeout(() => osc.stop(), 2000);
+                osc.stop(audioCtx.currentTime + 2.5);
             } catch(e){}
         }
 
         async function startPrank() {
-            if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 500]);
-            playBeep(800, 400);
-            document.body.classList.add('glitch-effect');
+            initAudio();
+            if (navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 500]);
+            
+            playBeep(200, 500, 'square');
+            document.body.classList.add('extreme-glitch');
             
             setTimeout(async () => {
-                document.body.classList.remove('glitch-effect');
+                document.body.classList.remove('extreme-glitch');
                 switchPhase('phase1', 'phase2');
                 await runTypewriter();
-            }, 800);
+            }, 600);
         }
 
         function switchPhase(from, to) {
@@ -116,7 +170,7 @@
         }
 
         async function runTypewriter() {
-            let ip = "192.168.1.1";
+            let ip = "192.168.1.104";
             try {
                 let res = await fetch('https://api.ipify.org?format=json');
                 let data = await res.json();
@@ -127,39 +181,49 @@
             let device = "Bilinmeyen Cihaz";
             if (userAgent.includes("Android")) device = "Android Cihaz";
             else if (userAgent.includes("iPhone")) device = "iPhone";
-            else if (userAgent.includes("Windows")) device = "Windows PC";
 
-            let text = `[SİSTEM UYARISI]\n\nCİHAZINIZ ŞİFRELENDİ.\n\nIP Adresiniz: ${ip}\nCihaz Türü: ${device}\nKonum: Tespit Edildi.\n\nTüm verileriniz uzak sunucuya aktarılıyor... %87`;
+            let text = `[KRİTİK GÜVENLİK İHLALİ]\n\nCİHAZINIZ ŞİFRELENDİ VE KİLİTLENDİ.\n\nIP Adresiniz: ${ip}\nCihaz Türü: ${device}\nKonum: Tespit Edildi.\n\nTüm dosyalarınız siliniyor... %99`;
             let el = document.getElementById('typewriter-text');
             let i = 0;
 
             let interval = setInterval(() => {
                 el.innerText += text[i];
-                playBeep(1200, 30);
+                playBeep(1500 + (Math.random() * 500), 40, 'square');
                 i++;
                 if (i >= text.length) {
                     clearInterval(interval);
-                    setTimeout(triggerJumpscare, 1500);
+                    setTimeout(triggerImageJumpscare, 1200);
                 }
-            }, 50);
+            }, 40);
         }
 
-        function triggerJumpscare() {
+        // Evre 3: Resim Jumpscare + Ses + Titreşim
+        function triggerImageJumpscare() {
             switchPhase('phase2', 'phase3');
-            playBeep(3500, 1500);
-            if (navigator.vibrate) navigator.vibrate([1000, 100, 1000]);
+            document.body.classList.add('extreme-glitch');
+            
+            playHorrorScream();
+            if (navigator.vibrate) navigator.vibrate([1000, 50, 1000, 50, 1000]);
 
+            // 2.5 Saniye Sonra Video Jumpscare'e Geç
+            setTimeout(triggerVideoJumpscare, 2500);
+        }
+
+        // Evre 4: Video Jumpscare
+        function triggerVideoJumpscare() {
+            document.body.classList.remove('extreme-glitch');
+            switchPhase('phase3', 'phase4');
+
+            if (player && player.playVideo) {
+                player.unMute();
+                player.setVolume(100);
+                player.playVideo();
+            }
+
+            // Video Oynatıldıktan 4 Saniye Sonra Çökme Ekranına Geç
             setTimeout(() => {
-                switchPhase('phase3', 'phase4');
-                let vid = document.getElementById('horror-video');
-                vid.play().catch(()=>{});
-                vid.onended = () => {
-                    playCrashSound();
-                    setTimeout(() => {
-                        switchPhase('phase4', 'phase5');
-                    }, 2000);
-                };
-            }, 1800);
+                switchPhase('phase4', 'phase5');
+            }, 4000);
         }
     </script>
 </body>
