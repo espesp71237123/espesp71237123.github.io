@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sürpriz!</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { width: 100%; height: 100%; background-color: #000; font-family: monospace; overflow: hidden; color: #fff; }
+        .phase { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .active { display: flex; }
+        #phase1 { background-color: #ffb6c1; }
+        .pink-btn { padding: 20px 40px; font-size: 24px; font-weight: bold; color: #fff; background-color: #ff1493; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: transform 0.1s; }
+        .pink-btn:active { transform: scale(0.95); }
+        #phase2 { background-color: #050505; color: #00ff00; padding: 20px; align-items: flex-start; justify-content: flex-start; text-align: left; }
+        .typewriter { font-size: 18px; line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
+        #phase3 { background-color: #000; position: relative; }
+        #jumpscare-img { width: 100%; height: 100%; object-fit: cover; }
+        .crack-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: url('https://i.ibb.co/L519p41/screen-crack.png') center/cover no-repeat; pointer-events: none; opacity: 0.8; }
+        #phase4 { background-color: #000; }
+        video { width: 100%; height: 100%; object-fit: contain; }
+        #phase5 { background: #fff; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: left; padding: 40px 20px; justify-content: flex-start; }
+        .chrome-error { max-width: 600px; margin: 0 auto; }
+        .chrome-error h1 { font-size: 22px; color: #5f6368; margin-bottom: 15px; font-weight: 500; }
+        .chrome-error p { font-size: 14px; color: #5f6368; line-height: 1.5; margin-bottom: 10px; }
+        .chrome-error .error-code { font-size: 11px; color: #5f6368; margin-top: 30px; text-transform: uppercase; }
+        @keyframes glitch { 0% { transform: translate(0) } 20% { transform: translate(-5px, 5px) } 40% { transform: translate(-5px, -5px) } 60% { transform: translate(5px, 5px) } 80% { transform: translate(5px, -5px) } 100% { transform: translate(0) } }
+        .glitch-effect { animation: glitch 0.1s infinite; filter: invert(1); }
+    </style>
+</head>
+<body>
+
+    <!-- EVRE 1: Pembe Buton -->
+    <div id="phase1" class="phase active">
+        <button class="pink-btn" onclick="startPrank()">DOKUN! ✨</button>
+    </div>
+
+    <!-- EVRE 2: Daktilo / Ransom Ekranı -->
+    <div id="phase2" class="phase">
+        <div id="typewriter-text" class="typewriter"></div>
+    </div>
+
+    <!-- EVRE 3: The Boiled One Jumpscare -->
+    <div id="phase3" class="phase">
+        <img id="jumpscare-img" src="https://i.ibb.co/3zd5Lkx/boiled-one.jpg" alt="BOILED ONE">
+        <div class="crack-overlay"></div>
+    </div>
+
+    <!-- EVRE 4: Analog Horror Video -->
+    <div id="phase4" class="phase">
+        <video id="horror-video" src="https://assets.mixkit.co/videos/preview/mixkit-scary-glitch-and-noise-effects-41541-large.mp4" playsinline></video>
+    </div>
+
+    <!-- EVRE 5: Fake Chrome Crash -->
+    <div id="phase5" class="phase">
+        <div class="chrome-error">
+            <h1>Bu siteye erişilemiyor</h1>
+            <p><strong>espesp71237123.github.io</strong> bağlanmayı reddetti.</p>
+            <p>Aşağıdakileri deneyin:</p>
+            <ul>
+                <li>Bağlantıyı kontrol etme</li>
+                <li>Vekil sunucuyu ve güvenlik duvarını kontrol etme</li>
+            </ul>
+            <div class="error-code">ERR_CONNECTION_CLOSED</div>
+        </div>
+    </div>
+
+    <script>
+        let audioCtx;
+
+        function playBeep(freq, duration) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.value = freq;
+                gain.gain.value = 0.3;
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                setTimeout(() => osc.stop(), duration);
+            } catch(e){}
+        }
+
+        function playCrashSound() {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.value = 80;
+                gain.gain.value = 0.5;
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                setTimeout(() => osc.stop(), 2000);
+            } catch(e){}
+        }
+
+        async function startPrank() {
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 500]);
+            playBeep(800, 400);
+            document.body.classList.add('glitch-effect');
+            
+            setTimeout(async () => {
+                document.body.classList.remove('glitch-effect');
+                switchPhase('phase1', 'phase2');
+                await runTypewriter();
+            }, 800);
+        }
+
+        function switchPhase(from, to) {
+            document.getElementById(from).classList.remove('active');
+            document.getElementById(to).classList.add('active');
+        }
+
+        async function runTypewriter() {
+            let ip = "192.168.1.1";
+            try {
+                let res = await fetch('https://api.ipify.org?format=json');
+                let data = await res.json();
+                ip = data.ip;
+            } catch(e){}
+
+            let userAgent = navigator.userAgent;
+            let device = "Bilinmeyen Cihaz";
+            if (userAgent.includes("Android")) device = "Android Cihaz";
+            else if (userAgent.includes("iPhone")) device = "iPhone";
+            else if (userAgent.includes("Windows")) device = "Windows PC";
+
+            let text = `[SİSTEM UYARISI]\n\nCİHAZINIZ ŞİFRELENDİ.\n\nIP Adresiniz: ${ip}\nCihaz Türü: ${device}\nKonum: Tespit Edildi.\n\nTüm verileriniz uzak sunucuya aktarılıyor... %87`;
+            let el = document.getElementById('typewriter-text');
+            let i = 0;
+
+            let interval = setInterval(() => {
+                el.innerText += text[i];
+                playBeep(1200, 30);
+                i++;
+                if (i >= text.length) {
+                    clearInterval(interval);
+                    setTimeout(triggerJumpscare, 1500);
+                }
+            }, 50);
+        }
+
+        function triggerJumpscare() {
+            switchPhase('phase2', 'phase3');
+            playBeep(3500, 1500);
+            if (navigator.vibrate) navigator.vibrate([1000, 100, 1000]);
+
+            setTimeout(() => {
+                switchPhase('phase3', 'phase4');
+                let vid = document.getElementById('horror-video');
+                vid.play().catch(()=>{});
+                vid.onended = () => {
+                    playCrashSound();
+                    setTimeout(() => {
+                        switchPhase('phase4', 'phase5');
+                    }, 2000);
+                };
+            }, 1800);
+        }
+    </script>
+</body>
+</html>
