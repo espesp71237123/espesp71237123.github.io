@@ -26,17 +26,17 @@
         }
 
         /* EVRE 2: Hacker Terminal / Daktilo */
-        #phase2 { background-color: #020000; color: #ff0000; padding: 30px; align-items: flex-start; justify-content: flex-start; text-align: left; }
-        .terminal-box { width: 100%; height: 100%; border: 1px solid rgba(255,0,0,0.3); padding: 20px; background: rgba(10,0,0,0.8); box-shadow: inset 0 0 20px #ff000033; }
-        .typewriter { font-size: 18px; line-height: 1.5; font-weight: bold; text-shadow: 0 0 8px #ff0000, 2px 0 #000; white-space: pre-wrap; word-break: break-all; }
+        #phase2 { background-color: #020000; color: #ff0000; padding: 20px; align-items: flex-start; justify-content: flex-start; text-align: left; }
+        .terminal-box { width: 100%; height: 100%; border: 1px solid rgba(255,0,0,0.4); padding: 15px; background: rgba(10,0,0,0.9); box-shadow: inset 0 0 20px #ff000033; overflow-y: auto; }
+        .typewriter { font-size: 15px; line-height: 1.4; font-weight: bold; text-shadow: 0 0 8px #ff0000, 2px 0 #000; white-space: pre-wrap; word-break: break-all; }
 
         /* EVRE 3: KANLI RESİM JUMPSCARE */
         #phase3 { background-color: #000; position: relative; overflow: hidden; }
-        .jumpscare-img { width: 100%; height: 100%; object-fit: cover; filter: contrast(180%) brightness(90%); }
+        .jumpscare-img { width: 100%; height: 100%; object-fit: cover; filter: contrast(200%) brightness(100%); }
 
         /* EVRE 4: YOUTUBE VİDEO EKRANI */
         #phase4 { background-color: #000; position: relative; overflow: hidden; }
-        #youtube-player { width: 100vw; height: 100vh; pointer-events: none; transform: scale(1.35); }
+        #youtube-player { width: 100vw; height: 100vh; pointer-events: none; transform: scale(1.4); }
 
         /* EVRE 5: ÇÖKME / HATA EKRANI */
         #phase5 { background: #fff; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: left; padding: 40px 20px; justify-content: flex-start; }
@@ -78,7 +78,7 @@
 
     <!-- EVRE 3: Kanlı Resim Jumpscare Ekranı -->
     <div id="phase3" class="phase">
-        <img class="jumpscare-img" src="The_Boiled_One.jpg" alt="Jumpscare Face">
+        <img class="jumpscare-img" src="The_Boiled_One.jpg" onerror="this.src='The_Boiled_One.JPG'" alt="Jumpscare Face">
     </div>
 
     <!-- EVRE 4: YouTube Video Jumpscare Ekranı -->
@@ -131,7 +131,6 @@
             }
         }
 
-        // MEKANİK KLAVYE SİNYALİ
         function playKeySound() {
             try {
                 initAudio();
@@ -140,25 +139,24 @@
                 let filter = audioCtx.createBiquadFilter();
 
                 osc.type = 'sawtooth';
-                let freq = 800 + Math.random() * 700; 
+                let freq = 900 + Math.random() * 800; 
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
                 filter.type = 'bandpass';
-                filter.frequency.value = 1200;
+                filter.frequency.value = 1400;
 
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+                gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.025);
 
                 osc.connect(filter);
                 filter.connect(gain);
                 gain.connect(audioCtx.destination);
 
                 osc.start();
-                osc.stop(audioCtx.currentTime + 0.03);
+                osc.stop(audioCtx.currentTime + 0.025);
             } catch(e){}
         }
 
-        // FREKANSI BOZULMUŞ ÇIĞLIK SESİ
         function playDistortedScream() {
             try {
                 initAudio();
@@ -170,14 +168,14 @@
                 osc1.type = 'sawtooth';
                 osc2.type = 'square';
 
-                osc1.frequency.setValueAtTime(4500, audioCtx.currentTime);
-                osc1.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 2.8);
+                osc1.frequency.setValueAtTime(5000, audioCtx.currentTime);
+                osc1.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 3.0);
 
-                osc2.frequency.setValueAtTime(4300, audioCtx.currentTime);
-                osc2.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 2.8);
+                osc2.frequency.setValueAtTime(4800, audioCtx.currentTime);
+                osc2.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 3.0);
 
                 gain.gain.setValueAtTime(1.0, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.8);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3.0);
 
                 osc1.connect(gain);
                 osc2.connect(gain);
@@ -185,8 +183,8 @@
 
                 osc1.start();
                 osc2.start();
-                osc1.stop(audioCtx.currentTime + 2.8);
-                osc2.stop(audioCtx.currentTime + 2.8);
+                osc1.stop(audioCtx.currentTime + 3.0);
+                osc2.stop(audioCtx.currentTime + 3.0);
             } catch(e){}
         }
 
@@ -218,10 +216,14 @@
 
             let userAgent = navigator.userAgent;
             let device = "BİLİNMEYEN CİHAZ";
-            if (userAgent.includes("Android")) device = "ANDROID TESPİT EDİLDİ";
-            else if (userAgent.includes("iPhone")) device = "IOS TESPİT EDİLDİ";
+            if (userAgent.includes("Android")) device = "ANDROID (SİSTEM SIZILDI)";
+            else if (userAgent.includes("iPhone")) device = "IOS (SİSTEM SIZILDI)";
 
-            let text = `root@system:~# INITIALIZING BREACH...\n[!] ROOT ACCESS GRANTED.\n\n> CİHAZ SİSTEMİ ELE GEÇİRİLDİ.\n> IP ADRESİ: ${ip}\n> DONANIM: ${device}\n> KONUM: VERİ VERİTABANINA AKTARILDI.\n\n[SYSERR] TÜM DEPOLAMA ŞİFRELENİYOR...\n%10... %45... %88... %100\n\nSİSTEM TEPKİ VERMİYOR.`;
+            let screenRes = `${window.screen.width}x${window.screen.height}`;
+            let cores = navigator.hardwareConcurrency || "4";
+            let lang = navigator.language || "tr-TR";
+
+            let text = `root@kernel:~# INITIALIZING MALWARE BREACH...\n[!] ROOT SYSTEM ACCESS: FULL\n\n> HEDEF IP: ${ip}\n> DONANIM: ${device}\n> EKRAN BİLGİSİ: ${screenRes} px\n> İŞLEMCİ ÇEKİRDEK: ${cores} Core\n> SİSTEM DİLİ: ${lang}\n> KONUM: HASSAS TESPİT YAPILDI.\n\n[CRITICAL ERROR] KİŞİSEL VERİLER SIZDIRILIYOR...\nRESETHOST_KEY... ENCRYPTED.\n\nSİSTEM KİLİTLENDİ! %100`;
             let el = document.getElementById('typewriter-text');
             let i = 0;
 
@@ -231,9 +233,9 @@
                 i++;
                 if (i >= text.length) {
                     clearInterval(interval);
-                    setTimeout(triggerImageJumpscare, 1000);
+                    setTimeout(triggerImageJumpscare, 800);
                 }
-            }, 30);
+            }, 25);
         }
 
         function triggerImageJumpscare() {
@@ -241,9 +243,10 @@
             document.body.classList.add('hard-glitch-active');
             
             playDistortedScream();
-            if (navigator.vibrate) navigator.vibrate([1200, 50, 1200, 50, 1200]);
+            if (navigator.vibrate) navigator.vibrate([1500, 50, 1500, 50, 1500]);
 
-            setTimeout(triggerVideoJumpscare, 2800);
+            // Resim ekranda 3 saniye kalacak
+            setTimeout(triggerVideoJumpscare, 3000);
         }
 
         function triggerVideoJumpscare() {
@@ -252,13 +255,14 @@
 
             if (player && player.playVideo) {
                 player.unMute();
-                player.setVolume(100);
+                player.setVolume(100); // SES FULLEME
                 player.playVideo();
             }
 
+            // Video 10 saniye boyunca (uzun) oynayacak!
             setTimeout(() => {
                 switchPhase('phase4', 'phase5');
-            }, 4000);
+            }, 10000);
         }
     </script>
 </body>
