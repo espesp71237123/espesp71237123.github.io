@@ -1,36 +1,42 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sürpriz!</title>
+    <!-- Hacker Terminal Fontu -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
-        body, html { width: 100%; height: 100%; background-color: #000; font-family: 'Courier New', Courier, monospace; overflow: hidden; color: #fff; }
+        body, html { width: 100%; height: 100%; background-color: #000; font-family: 'Share Tech Mono', monospace; overflow: hidden; color: #ff0000; }
         
         .phase { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         .active { display: flex; }
 
         /* EVRE 1: Pembe Masum Buton */
         #phase1 { background-color: #ffb6c1; }
-        .pink-btn { padding: 25px 50px; font-size: 26px; font-weight: bold; color: #fff; background-color: #ff1493; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .pink-btn { padding: 25px 50px; font-size: 26px; font-weight: bold; color: #fff; background-color: #ff1493; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.3); font-family: sans-serif; }
         .pink-btn:active { transform: scale(0.9); }
 
-        /* ANALOG HORROR CRT EKRAN EFEKTİ */
-        .crt::after { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); z-index: 10; background-size: 100% 2px, 3px 100%; pointer-events: none; }
+        /* SAF CRT & BOZUK SİNYAL KATMANI */
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.08), rgba(0, 255, 0, 0.03), rgba(0, 0, 255, 0.08));
+            z-index: 99; background-size: 100% 3px, 6px 100%; pointer-events: none; opacity: 0.9;
+        }
 
-        /* EVRE 2: Daktilo Ekranı */
-        #phase2 { background-color: #050000; color: #ff0000; padding: 25px; align-items: flex-start; justify-content: flex-start; text-align: left; }
-        .typewriter { font-size: 18px; line-height: 1.6; font-weight: bold; text-shadow: 2px 0 #000, -2px 0 #fff; }
+        /* EVRE 2: Hacker Terminal / Daktilo */
+        #phase2 { background-color: #020000; color: #ff0000; padding: 30px; align-items: flex-start; justify-content: flex-start; text-align: left; }
+        .terminal-box { width: 100%; height: 100%; border: 1px solid rgba(255,0,0,0.3); padding: 20px; background: rgba(10,0,0,0.8); box-shadow: inset 0 0 20px #ff000033; }
+        .typewriter { font-size: 18px; line-height: 1.5; font-weight: bold; text-shadow: 0 0 8px #ff0000, 2px 0 #000; white-space: pre-wrap; word-break: break-all; }
 
-        /* EVRE 3: RESİM JUMPSCARE EKRANI */
+        /* EVRE 3: KANLI RESİM JUMPSCARE */
         #phase3 { background-color: #000; position: relative; overflow: hidden; }
-        .jumpscare-img { width: 100%; height: 100%; object-fit: cover; }
+        .jumpscare-img { width: 100%; height: 100%; object-fit: cover; filter: contrast(180%) brightness(90%); }
 
         /* EVRE 4: YOUTUBE VİDEO EKRANI */
         #phase4 { background-color: #000; position: relative; overflow: hidden; }
-        #youtube-player { width: 100vw; height: 100vh; pointer-events: none; transform: scale(1.3); }
+        #youtube-player { width: 100vw; height: 100vh; pointer-events: none; transform: scale(1.35); }
 
         /* EVRE 5: ÇÖKME / HATA EKRANI */
         #phase5 { background: #fff; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: left; padding: 40px 20px; justify-content: flex-start; }
@@ -39,33 +45,40 @@
         .chrome-error p { font-size: 14px; color: #5f6368; line-height: 1.5; margin-bottom: 10px; }
         .chrome-error .error-code { font-size: 11px; color: #5f6368; margin-top: 30px; text-transform: uppercase; }
 
-        /* AŞIRI ŞİDDETLİ GLİTCH EFEKTİ */
-        @keyframes extremeGlitch {
-            0% { transform: translate(0) scale(1); filter: invert(0) hue-rotate(0deg); }
-            20% { transform: translate(-20px, 20px) scale(1.1); filter: invert(1) hue-rotate(90deg); }
-            40% { transform: translate(-20px, -20px) scale(0.9); filter: contrast(500%); }
-            60% { transform: translate(20px, 20px) scale(1.2); filter: invert(1); }
-            80% { transform: translate(20px, -20px) scale(0.95); filter: hue-rotate(180deg); }
-            100% { transform: translate(0) scale(1); filter: invert(0); }
+        /* SAF GERÇEKÇİ HACKER / DATAMOSH GLİTCH EFEKTİ */
+        @keyframes hardGlitch {
+            0% { clip-path: inset(40% 0 61% 0); transform: skew(0.8deg) translate(-15px, 5px); filter: invert(0) hue-rotate(0deg) contrast(300%); }
+            10% { clip-path: inset(92% 0 1% 0); transform: skew(-1deg) translate(20px, -10px); filter: invert(1) hue-rotate(180deg); }
+            20% { clip-path: inset(10% 0 80% 0); transform: skew(2deg) translate(-25px, 15px); filter: contrast(500%) brightness(150%); }
+            30% { clip-path: inset(75% 0 5% 0); transform: skew(-2deg) translate(15px, -5px); filter: invert(0); }
+            40% { clip-path: inset(25% 0 58% 0); transform: skew(1.5deg) translate(-10px, 20px); filter: hue-rotate(90deg); }
+            50% { clip-path: inset(85% 0 2% 0); transform: skew(-3deg) translate(30px, -15px); filter: invert(1); }
+            60% { clip-path: inset(5% 0 90% 0); transform: skew(3deg) translate(-20px, 10px); filter: contrast(400%); }
+            70% { clip-path: inset(50% 0 30% 0); transform: skew(-1deg) translate(10px, -20px); filter: hue-rotate(270deg); }
+            80% { clip-path: inset(15% 0 70% 0); transform: skew(2deg) translate(-15px, 5px); filter: invert(0); }
+            90% { clip-path: inset(65% 0 15% 0); transform: skew(-2.5deg) translate(25px, -10px); filter: contrast(600%); }
+            100% { clip-path: inset(0% 0 0% 0); transform: skew(0deg) translate(0); filter: invert(0); }
         }
-        .extreme-glitch { animation: extremeGlitch 0.04s infinite; }
+        .hard-glitch-active { animation: hardGlitch 0.02s infinite alternate; }
     </style>
 </head>
-<body class="crt">
+<body class="scanlines">
 
     <!-- EVRE 1: Pembe Buton -->
     <div id="phase1" class="phase active">
         <button class="pink-btn" onclick="startPrank()">DOKUN! ✨</button>
     </div>
 
-    <!-- EVRE 2: Daktilo / Cihaz Bilgisi Ekranı -->
+    <!-- EVRE 2: Hacker Terminal Ekranı -->
     <div id="phase2" class="phase">
-        <div id="typewriter-text" class="typewriter"></div>
+        <div class="terminal-box">
+            <div id="typewriter-text" class="typewriter"></div>
+        </div>
     </div>
 
-    <!-- EVRE 3: Resim Jumpscare Ekranı -->
+    <!-- EVRE 3: Kanlı Resim Jumpscare Ekranı -->
     <div id="phase3" class="phase">
-        <img class="jumpscare-img" src="https://share.google/sOS6eBMdJnqCcrHWT" alt="Jumpscare Face">
+        <img class="jumpscare-img" src="The_Boiled_One.jpg" alt="Jumpscare Face">
     </div>
 
     <!-- EVRE 4: YouTube Video Jumpscare Ekranı -->
@@ -94,7 +107,6 @@
         let audioCtx;
         let player;
 
-        // YouTube Oyuncusunu Hazırla
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
                 videoId: 'mXTYvRf3qew',
@@ -114,55 +126,81 @@
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
         }
 
-        function playBeep(freq, duration, type='sawtooth') {
+        // MEKANİK KLAVYE SİNYALİ
+        function playKeySound() {
             try {
                 initAudio();
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.value = freq;
-                gain.gain.value = 0.4;
-                osc.connect(gain);
+                let filter = audioCtx.createBiquadFilter();
+
+                osc.type = 'sawtooth';
+                let freq = 800 + Math.random() * 700; 
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+                filter.type = 'bandpass';
+                filter.frequency.value = 1200;
+
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+
+                osc.connect(filter);
+                filter.connect(gain);
                 gain.connect(audioCtx.destination);
+
                 osc.start();
-                setTimeout(() => osc.stop(), duration);
+                osc.stop(audioCtx.currentTime + 0.03);
             } catch(e){}
         }
 
-        function playHorrorScream() {
+        // FREKANSI BOZULMUŞ ÇIĞLIK SESİ
+        function playDistortedScream() {
             try {
                 initAudio();
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
                 
-                osc.frequency.setValueAtTime(3000, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 2.5);
+                let osc1 = audioCtx.createOscillator();
+                let osc2 = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
 
-                gain.gain.setValueAtTime(1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2.5);
+                osc1.type = 'sawtooth';
+                osc2.type = 'square';
 
-                osc.connect(gain);
+                osc1.frequency.setValueAtTime(4500, audioCtx.currentTime);
+                osc1.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 2.8);
+
+                osc2.frequency.setValueAtTime(4300, audioCtx.currentTime);
+                osc2.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 2.8);
+
+                gain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.8);
+
+                osc1.connect(gain);
+                osc2.connect(gain);
                 gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 2.5);
+
+                osc1.start();
+                osc2.start();
+                osc1.stop(audioCtx.currentTime + 2.8);
+                osc2.stop(audioCtx.currentTime + 2.8);
             } catch(e){}
         }
 
         async function startPrank() {
             initAudio();
-            if (navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 500]);
+            if (navigator.vibrate) navigator.vibrate([400, 100, 400, 100, 800]);
             
-            playBeep(200, 500, 'square');
-            document.body.classList.add('extreme-glitch');
+            document.body.classList.add('hard-glitch-active');
             
             setTimeout(async () => {
-                document.body.classList.remove('extreme-glitch');
+                document.body.classList.remove('hard-glitch-active');
                 switchPhase('phase1', 'phase2');
                 await runTypewriter();
-            }, 600);
+            }, 800);
         }
 
         function switchPhase(from, to) {
@@ -179,40 +217,37 @@
             } catch(e){}
 
             let userAgent = navigator.userAgent;
-            let device = "Bilinmeyen Cihaz";
-            if (userAgent.includes("Android")) device = "Android Cihaz";
-            else if (userAgent.includes("iPhone")) device = "iPhone";
+            let device = "BİLİNMEYEN CİHAZ";
+            if (userAgent.includes("Android")) device = "ANDROID TESPİT EDİLDİ";
+            else if (userAgent.includes("iPhone")) device = "IOS TESPİT EDİLDİ";
 
-            let text = `[KRİTİK GÜVENLİK İHLALİ]\n\nCİHAZINIZ ŞİFRELENDİ VE KİLİTLENDİ.\n\nIP Adresiniz: ${ip}\nCihaz Türü: ${device}\nKonum: Tespit Edildi.\n\nTüm dosyalarınız siliniyor... %99`;
+            let text = `root@system:~# INITIALIZING BREACH...\n[!] ROOT ACCESS GRANTED.\n\n> CİHAZ SİSTEMİ ELE GEÇİRİLDİ.\n> IP ADRESİ: ${ip}\n> DONANIM: ${device}\n> KONUM: VERİ VERİTABANINA AKTARILDI.\n\n[SYSERR] TÜM DEPOLAMA ŞİFRELENİYOR...\n%10... %45... %88... %100\n\nSİSTEM TEPKİ VERMİYOR.`;
             let el = document.getElementById('typewriter-text');
             let i = 0;
 
             let interval = setInterval(() => {
                 el.innerText += text[i];
-                playBeep(1500 + (Math.random() * 500), 40, 'square');
+                playKeySound();
                 i++;
                 if (i >= text.length) {
                     clearInterval(interval);
-                    setTimeout(triggerImageJumpscare, 1200);
+                    setTimeout(triggerImageJumpscare, 1000);
                 }
-            }, 40);
+            }, 30);
         }
 
-        // Evre 3: Resim Jumpscare + Ses + Titreşim
         function triggerImageJumpscare() {
             switchPhase('phase2', 'phase3');
-            document.body.classList.add('extreme-glitch');
+            document.body.classList.add('hard-glitch-active');
             
-            playHorrorScream();
-            if (navigator.vibrate) navigator.vibrate([1000, 50, 1000, 50, 1000]);
+            playDistortedScream();
+            if (navigator.vibrate) navigator.vibrate([1200, 50, 1200, 50, 1200]);
 
-            // 2.5 Saniye Sonra Video Jumpscare'e Geç
-            setTimeout(triggerVideoJumpscare, 2500);
+            setTimeout(triggerVideoJumpscare, 2800);
         }
 
-        // Evre 4: Video Jumpscare
         function triggerVideoJumpscare() {
-            document.body.classList.remove('extreme-glitch');
+            document.body.classList.remove('hard-glitch-active');
             switchPhase('phase3', 'phase4');
 
             if (player && player.playVideo) {
@@ -221,7 +256,6 @@
                 player.playVideo();
             }
 
-            // Video Oynatıldıktan 4 Saniye Sonra Çökme Ekranına Geç
             setTimeout(() => {
                 switchPhase('phase4', 'phase5');
             }, 4000);
