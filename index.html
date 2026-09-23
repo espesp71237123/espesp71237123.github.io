@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sürpriz!</title>
-    <!-- Hacker Terminal Fontu -->
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
@@ -15,48 +14,42 @@
 
         /* EVRE 1: Pembe Masum Buton */
         #phase1 { background-color: #ffb6c1; z-index: 100; }
-        .pink-btn { padding: 30px 60px; font-size: 28px; font-weight: bold; color: #fff; background-color: #ff1493; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.4); font-family: sans-serif; }
-        .pink-btn:active { transform: scale(0.85); }
+        .pink-btn { padding: 35px 70px; font-size: 30px; font-weight: bold; color: #fff; background-color: #ff1493; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-family: sans-serif; }
+        .pink-btn:active { transform: scale(0.8); }
 
-        /* SAF CRT & BOZUK SİNYAL KATMANI */
+        /* CRT EFEKTİ */
         .scanlines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.08), rgba(0, 255, 0, 0.03), rgba(0, 0, 255, 0.08));
             z-index: 99; background-size: 100% 3px, 6px 100%; pointer-events: none; opacity: 0.9;
         }
 
-        /* EVRE 2: Hacker Terminal / Daktilo */
-        #phase2 { background-color: #020000; color: #ff0000; padding: 20px; align-items: flex-start; justify-content: flex-start; text-align: left; }
+        /* EVRE 2: Hacker Terminal */
+        #phase2 { background-color: #020000; color: #ff0000; padding: 20px; align-items: flex-start; justify-content: flex-start; text-align: left; z-index: 101; }
         .terminal-box { width: 100%; height: 100%; border: 1px solid rgba(255,0,0,0.4); padding: 15px; background: rgba(10,0,0,0.9); box-shadow: inset 0 0 20px #ff000033; overflow-y: auto; }
         .typewriter { font-size: 15px; line-height: 1.4; font-weight: bold; text-shadow: 0 0 8px #ff0000, 2px 0 #000; white-space: pre-wrap; word-break: break-all; }
 
-        /* EVRE 3: KANLI RESİM JUMPSCARE */
-        #phase3 { background-color: #000; position: relative; overflow: hidden; z-index: 101; }
+        /* EVRE 3: Kanlı Resim Jumpscare */
+        #phase3 { background-color: #000; position: relative; overflow: hidden; z-index: 102; }
         .jumpscare-img { width: 100%; height: 100%; object-fit: cover; filter: contrast(200%) brightness(100%); }
 
-        /* EVRE 4: YOUTUBE VİDEO EKRANI */
-        #phase4 { background-color: #000; position: relative; overflow: hidden; z-index: 102; }
-        #youtube-player { width: 100vw; height: 100vh; pointer-events: none; transform: scale(1.4); }
+        /* EVRE 4: Video Jumpscare */
+        #phase4 { background-color: #000; position: relative; overflow: hidden; z-index: 103; }
+        #jump-video { width: 100vw; height: 100vh; object-fit: cover; }
 
-        /* EVRE 5: ÇÖKME / HATA EKRANI */
-        #phase5 { background: #fff; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: left; padding: 40px 20px; justify-content: flex-start; z-index: 103; }
+        /* EVRE 5: Çökme / Hata Ekranı */
+        #phase5 { background: #fff; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: left; padding: 40px 20px; justify-content: flex-start; z-index: 104; }
         .chrome-error { max-width: 600px; margin: 0 auto; }
         .chrome-error h1 { font-size: 22px; color: #5f6368; margin-bottom: 15px; font-weight: 500; }
         .chrome-error p { font-size: 14px; color: #5f6368; line-height: 1.5; margin-bottom: 10px; }
         .chrome-error .error-code { font-size: 11px; color: #5f6368; margin-top: 30px; text-transform: uppercase; }
 
-        /* SAF GERÇEKÇİ HACKER / DATAMOSH GLİTCH EFEKTİ */
         @keyframes hardGlitch {
             0% { clip-path: inset(40% 0 61% 0); transform: skew(0.8deg) translate(-15px, 5px); filter: invert(0) hue-rotate(0deg) contrast(300%); }
-            10% { clip-path: inset(92% 0 1% 0); transform: skew(-1deg) translate(20px, -10px); filter: invert(1) hue-rotate(180deg); }
             20% { clip-path: inset(10% 0 80% 0); transform: skew(2deg) translate(-25px, 15px); filter: contrast(500%) brightness(150%); }
-            30% { clip-path: inset(75% 0 5% 0); transform: skew(-2deg) translate(15px, -5px); filter: invert(0); }
             40% { clip-path: inset(25% 0 58% 0); transform: skew(1.5deg) translate(-10px, 20px); filter: hue-rotate(90deg); }
-            50% { clip-path: inset(85% 0 2% 0); transform: skew(-3deg) translate(30px, -15px); filter: invert(1); }
             60% { clip-path: inset(5% 0 90% 0); transform: skew(3deg) translate(-20px, 10px); filter: contrast(400%); }
-            70% { clip-path: inset(50% 0 30% 0); transform: skew(-1deg) translate(10px, -20px); filter: hue-rotate(270deg); }
             80% { clip-path: inset(15% 0 70% 0); transform: skew(2deg) translate(-15px, 5px); filter: invert(0); }
-            90% { clip-path: inset(65% 0 15% 0); transform: skew(-2.5deg) translate(25px, -10px); filter: contrast(600%); }
             100% { clip-path: inset(0% 0 0% 0); transform: skew(0deg) translate(0); filter: invert(0); }
         }
         .hard-glitch-active { animation: hardGlitch 0.02s infinite alternate; }
@@ -64,29 +57,32 @@
 </head>
 <body class="scanlines">
 
-    <!-- EVRE 1: Pembe Buton -->
+    <!-- EVRE 1 -->
     <div id="phase1" class="phase active">
         <button class="pink-btn" id="startBtn">DOKUN! ✨</button>
     </div>
 
-    <!-- EVRE 2: Hacker Terminal Ekranı -->
+    <!-- EVRE 2 -->
     <div id="phase2" class="phase">
         <div class="terminal-box">
             <div id="typewriter-text" class="typewriter"></div>
         </div>
     </div>
 
-    <!-- EVRE 3: Kanlı Resim Jumpscare Ekranı -->
+    <!-- EVRE 3 -->
     <div id="phase3" class="phase">
-        <img class="jumpscare-img" src="The_Boiled_One.jpg" onerror="this.src='The_Boiled_One.JPG'" alt="Jumpscare Face">
+        <img class="jumpscare-img" src="The_Boiled_One.jpg" onerror="this.src='The_Boiled_One.JPG'" alt="Jumpscare">
     </div>
 
-    <!-- EVRE 4: YouTube Video Jumpscare Ekranı -->
+    <!-- EVRE 4 -->
     <div id="phase4" class="phase">
-        <div id="youtube-player"></div>
+        <video id="jump-video" preload="auto" playsinline>
+            <!-- Buraya kendi video dosyanın adını yazabilirsin (örn: video.mp4) -->
+            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+        </video>
     </div>
 
-    <!-- EVRE 5: Fake Chrome Çökme Ekranı -->
+    <!-- EVRE 5 -->
     <div id="phase5" class="phase">
         <div class="chrome-error">
             <h1>Bu siteye erişilemiyor</h1>
@@ -100,35 +96,18 @@
         </div>
     </div>
 
-    <!-- YouTube API Script -->
-    <script src="https://www.youtube.com/iframe_api"></script>
-
     <script>
         let audioCtx;
-        let player;
-
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('youtube-player', {
-                videoId: 'mXTYvRf3qew',
-                playerVars: {
-                    'autoplay': 0,
-                    'controls': 0,
-                    'disablekb': 1,
-                    'modestbranding': 1,
-                    'rel': 0,
-                    'showinfo': 0,
-                    'playsinline': 1
-                }
-            });
-        }
 
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            } catch(e){}
         }
 
         function playKeySound() {
@@ -136,22 +115,12 @@
                 initAudio();
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
-                let filter = audioCtx.createBiquadFilter();
-
                 osc.type = 'sawtooth';
-                let freq = 900 + Math.random() * 800; 
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-                filter.type = 'bandpass';
-                filter.frequency.value = 1400;
-
-                gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(900 + Math.random() * 800, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.025);
-
-                osc.connect(filter);
-                filter.connect(gain);
+                osc.connect(gain);
                 gain.connect(audioCtx.destination);
-
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.025);
             } catch(e){}
@@ -160,27 +129,20 @@
         function playDistortedScream() {
             try {
                 initAudio();
-                
                 let osc1 = audioCtx.createOscillator();
                 let osc2 = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
-
                 osc1.type = 'sawtooth';
                 osc2.type = 'square';
-
                 osc1.frequency.setValueAtTime(5000, audioCtx.currentTime);
                 osc1.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 3.0);
-
                 osc2.frequency.setValueAtTime(4800, audioCtx.currentTime);
                 osc2.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 3.0);
-
                 gain.gain.setValueAtTime(1.0, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3.0);
-
                 osc1.connect(gain);
                 osc2.connect(gain);
                 gain.connect(audioCtx.destination);
-
                 osc1.start();
                 osc2.start();
                 osc1.stop(audioCtx.currentTime + 3.0);
@@ -188,11 +150,9 @@
             } catch(e){}
         }
 
-        // Butona tıklandığında (veya dokunulduğunda) direkt tetiklensin
-        document.getElementById('startBtn').addEventListener('click', function() {
-            startPrank();
-        });
-        document.getElementById('startBtn').addEventListener('touchstart', function(e) {
+        const btn = document.getElementById('startBtn');
+        btn.addEventListener('click', startPrank);
+        btn.addEventListener('touchstart', function(e) {
             e.preventDefault();
             startPrank();
         });
@@ -261,12 +221,16 @@
             document.body.classList.remove('hard-glitch-active');
             switchPhase('phase3', 'phase4');
 
-            if (player && player.playVideo) {
-                player.unMute();
-                player.setVolume(100);
-                player.playVideo();
-            }
+            let vid = document.getElementById('jump-video');
+            vid.volume = 1.0;
+            vid.play().catch(e => {
+                console.log("Video oynatma hatası:", e);
+            });
 
+            vid.onended = function() {
+                switchPhase('phase4', 'phase5');
+            };
+            
             setTimeout(() => {
                 switchPhase('phase4', 'phase5');
             }, 10000);
