@@ -14,9 +14,9 @@
         .active { display: flex; }
 
         /* EVRE 1: Pembe Masum Buton */
-        #phase1 { background-color: #ffb6c1; }
-        .pink-btn { padding: 25px 50px; font-size: 26px; font-weight: bold; color: #fff; background-color: #ff1493; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.3); font-family: sans-serif; }
-        .pink-btn:active { transform: scale(0.9); }
+        #phase1 { background-color: #ffb6c1; z-index: 100; }
+        .pink-btn { padding: 30px 60px; font-size: 28px; font-weight: bold; color: #fff; background-color: #ff1493; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.4); font-family: sans-serif; }
+        .pink-btn:active { transform: scale(0.85); }
 
         /* SAF CRT & BOZUK SİNYAL KATMANI */
         .scanlines {
@@ -31,15 +31,15 @@
         .typewriter { font-size: 15px; line-height: 1.4; font-weight: bold; text-shadow: 0 0 8px #ff0000, 2px 0 #000; white-space: pre-wrap; word-break: break-all; }
 
         /* EVRE 3: KANLI RESİM JUMPSCARE */
-        #phase3 { background-color: #000; position: relative; overflow: hidden; }
+        #phase3 { background-color: #000; position: relative; overflow: hidden; z-index: 101; }
         .jumpscare-img { width: 100%; height: 100%; object-fit: cover; filter: contrast(200%) brightness(100%); }
 
         /* EVRE 4: YOUTUBE VİDEO EKRANI */
-        #phase4 { background-color: #000; position: relative; overflow: hidden; }
+        #phase4 { background-color: #000; position: relative; overflow: hidden; z-index: 102; }
         #youtube-player { width: 100vw; height: 100vh; pointer-events: none; transform: scale(1.4); }
 
         /* EVRE 5: ÇÖKME / HATA EKRANI */
-        #phase5 { background: #fff; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: left; padding: 40px 20px; justify-content: flex-start; }
+        #phase5 { background: #fff; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: left; padding: 40px 20px; justify-content: flex-start; z-index: 103; }
         .chrome-error { max-width: 600px; margin: 0 auto; }
         .chrome-error h1 { font-size: 22px; color: #5f6368; margin-bottom: 15px; font-weight: 500; }
         .chrome-error p { font-size: 14px; color: #5f6368; line-height: 1.5; margin-bottom: 10px; }
@@ -66,7 +66,7 @@
 
     <!-- EVRE 1: Pembe Buton -->
     <div id="phase1" class="phase active">
-        <button class="pink-btn" onclick="startPrank()">DOKUN! ✨</button>
+        <button class="pink-btn" id="startBtn">DOKUN! ✨</button>
     </div>
 
     <!-- EVRE 2: Hacker Terminal Ekranı -->
@@ -188,7 +188,16 @@
             } catch(e){}
         }
 
-        async function startPrank() {
+        // Butona tıklandığında (veya dokunulduğunda) direkt tetiklensin
+        document.getElementById('startBtn').addEventListener('click', function() {
+            startPrank();
+        });
+        document.getElementById('startBtn').addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            startPrank();
+        });
+
+        function startPrank() {
             initAudio();
             if (navigator.vibrate) navigator.vibrate([400, 100, 400, 100, 800]);
             
@@ -245,7 +254,6 @@
             playDistortedScream();
             if (navigator.vibrate) navigator.vibrate([1500, 50, 1500, 50, 1500]);
 
-            // Resim ekranda 3 saniye kalacak
             setTimeout(triggerVideoJumpscare, 3000);
         }
 
@@ -255,11 +263,10 @@
 
             if (player && player.playVideo) {
                 player.unMute();
-                player.setVolume(100); // SES FULLEME
+                player.setVolume(100);
                 player.playVideo();
             }
 
-            // Video 10 saniye boyunca (uzun) oynayacak!
             setTimeout(() => {
                 switchPhase('phase4', 'phase5');
             }, 10000);
