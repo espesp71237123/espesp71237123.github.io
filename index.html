@@ -12,14 +12,14 @@
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         html, body { width: 100%; height: 100%; background: #000; overflow: hidden; font-family: 'VT323', monospace; }
         
-        /* ANALOG TV / VHS EFEKTİ */
+        /* CRT Ekran Çizgi Efekti */
         .crt-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 4px, 6px 100%; z-index: 999999; pointer-events: none;
         }
 
-        /* EVRE 1: Ürkütücü Giriş */
+        /* EVRE 1: Başlangıç Dokunma Ekranı */
         #phase1 {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: #050505; display: flex; justify-content: center;
@@ -30,21 +30,20 @@
         .phase { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; }
         .active { display: flex !important; flex-direction: column; }
 
-        /* EVRE 2: Terminal / Fidye */
+        /* EVRE 2: Terminal / Fidye Ekranı */
         #phase2 { background-color: #000; padding: 20px; z-index: 888888; }
         .terminal-box { width: 100%; height: 100%; overflow-y: auto; padding-top: 10px; }
         .typewriter { font-size: 22px; line-height: 1.2; color: #ff2a2a; white-space: pre-wrap; word-break: break-all; text-shadow: 2px 0 2px rgba(255,0,0,0.8), -2px 0 2px rgba(0,0,255,0.8); }
 
-        /* EVRE 3: Boiled One Jumpscare */
-        #phase3 { background-color: #000; z-index: 777777; justify-content: center; align-items: center; }
+        /* EVRE 3: Resim Jumpscare */
+        #phase3 { background-color: #000; z-index: 777777; justify-content: center; align-items: center; position: relative; }
         .jumpscare-img { width: 100%; height: 100%; object-fit: cover; filter: contrast(250%) saturate(150%) brightness(80%); mix-blend-mode: hard-light; }
 
-        /* EVRE 4: YouTube Videosu */
-        #phase4 { background-color: #000; z-index: 666666; justify-content: center; align-items: center; overflow: hidden; }
-        #yt-player { width: 100vw; height: 100vh; pointer-events: none; border: none; transform: scale(1.35); }
+        /* Arka Planda Görünmez Çığlık Oynatıcısı */
+        #scream-box { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; overflow: hidden; }
 
-        /* EVRE 5: Sahte Çökme Ekranı */
-        #phase5 { background: #202124; color: #bdc1c6; font-family: sans-serif; padding: 40px 20px; z-index: 555555; align-items: flex-start; justify-content: flex-start; }
+        /* EVRE 4: Sahte Çökme Ekranı */
+        #phase4 { background: #202124; color: #bdc1c6; font-family: sans-serif; padding: 40px 20px; z-index: 555555; align-items: flex-start; justify-content: flex-start; }
         .chrome-error { max-width: 600px; margin: 0 auto; text-align: left; }
         .chrome-error h1 { font-size: 24px; color: #e8eaed; margin-bottom: 15px; font-weight: normal; }
         .chrome-error p { font-size: 15px; line-height: 1.5; margin-bottom: 10px; }
@@ -60,41 +59,33 @@
             100% { transform: translate(0) scale(1); }
         }
         .glitch-active { animation: heavyGlitch 0.1s infinite; }
-
         @keyframes textBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         .blinking { animation: textBlink 1.5s infinite; }
     </style>
-    <!-- YouTube API -->
     <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
 
     <div class="crt-overlay"></div>
 
-    <!-- EVRE 1: Ürkütücü Giriş -->
+    <!-- 1. Evre -->
     <div id="phase1" onclick="startPrank(event)" ontouchstart="startPrank(event)">
         <div class="blinking">[ BAĞLANTIYI KURMAK İÇİN DOKUNUN ]</div>
     </div>
 
-    <!-- EVRE 2: Terminal -->
+    <!-- 2. Evre -->
     <div id="phase2" class="phase">
-        <div class="terminal-box">
-            <div id="typewriter-text" class="typewriter"></div>
-        </div>
+        <div class="terminal-box"><div id="typewriter-text" class="typewriter"></div></div>
     </div>
 
-    <!-- EVRE 3: Boiled One -->
+    <!-- 3. Evre: Resim ve Gizli Ses -->
     <div id="phase3" class="phase">
-        <img class="jumpscare-img" src="The_Boiled_One.jpg" alt="BOILED">
+        <img class="jumpscare-img" src="resim.jpg" alt="Jumpscare">
+        <div id="scream-box"><div id="scream-player"></div></div>
     </div>
 
-    <!-- EVRE 4: YouTube Video Evresi -->
+    <!-- 4. Evre: Sahte Çökme -->
     <div id="phase4" class="phase">
-        <div id="yt-player"></div>
-    </div>
-
-    <!-- EVRE 5: Hata Ekranı -->
-    <div id="phase5" class="phase">
         <div class="chrome-error">
             <h1>Aw, Snap!</h1>
             <p>Something went wrong while displaying this webpage.</p>
@@ -106,25 +97,25 @@
     <script>
         let started = false;
         let audioCtx;
-        let ytPlayer;
+        let screamPlayer;
 
-        // YouTube Oyuncusunu Hazırla
+        // YouTube Iframe API
         function onYouTubeIframeAPIReady() {
-            ytPlayer = new YT.Player('yt-player', {
-                videoId: 'mXTYvRf3qew',
-                playerVars: {
-                    'autoplay': 0,
-                    'controls': 0,
-                    'disablekb': 1,
-                    'fs': 0,
-                    'modestbranding': 1,
-                    'rel': 0,
-                    'playsinline': 1
+            screamPlayer = new YT.Player('scream-player', {
+                videoId: 'c_mpavBpZlA', // Gönderdiğin Shorts videosunun ID'si (Çığlık Sesi)
+                playerVars: { 
+                    'autoplay': 0, 
+                    'controls': 0, 
+                    'disablekb': 1, 
+                    'fs': 0, 
+                    'modestbranding': 1, 
+                    'rel': 0, 
+                    'playsinline': 1 
                 }
             });
         }
 
-        function startPrank(e) {
+        async function startPrank(e) {
             if (e) e.preventDefault();
             if (started) return;
             started = true;
@@ -134,20 +125,18 @@
                 if (audioCtx.state === 'suspended') audioCtx.resume();
             } catch(err){}
 
-            // YouTube izin kilidini kullanıcı dokunmasıyla aç
+            // Kullanıcı dokunduğu an tarayıcının ses engellerini kaldırıyoruz
             try {
-                if(ytPlayer && ytPlayer.playVideo) {
-                    ytPlayer.playVideo();
-                    ytPlayer.pauseVideo();
+                if(screamPlayer && screamPlayer.playVideo) { 
+                    screamPlayer.playVideo(); 
+                    screamPlayer.pauseVideo(); 
                 }
             } catch(err){}
 
-            // Dızzzt Sesi ve Ekran Kırılması (Analog Glitch)
             playDizzzt();
             document.body.classList.add('glitch-active');
             try { if (navigator.vibrate) navigator.vibrate([200, 50, 200]); } catch(err){}
 
-            // 0.6 saniye kaos sonra terminale geçiş
             setTimeout(() => {
                 document.body.classList.remove('glitch-active');
                 document.getElementById('phase1').style.display = 'none';
@@ -156,24 +145,19 @@
             }, 600);
         }
 
-        // --- SES MOTORLARI ---
         function playDizzzt() {
             try {
                 if(!audioCtx) return;
                 let bufferSize = audioCtx.sampleRate * 0.5;
                 let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
                 let data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) {
-                    data[i] = Math.random() * 2 - 1;
-                }
+                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
                 let noise = audioCtx.createBufferSource();
                 noise.buffer = buffer;
                 let gain = audioCtx.createGain();
                 gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-                noise.connect(gain);
-                gain.connect(audioCtx.destination);
-                noise.start();
+                noise.connect(gain); gain.connect(audioCtx.destination); noise.start();
             } catch(e){}
         }
 
@@ -187,114 +171,66 @@
                 osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.03);
                 gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.03);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.03);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.03);
             } catch(e){}
         }
 
-        function playScream() {
-            try {
-                if(!audioCtx) return;
-                let now = audioCtx.currentTime;
-                let osc1 = audioCtx.createOscillator();
-                let osc2 = audioCtx.createOscillator();
-                let osc3 = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-
-                osc1.type = 'sawtooth';
-                osc2.type = 'square';
-                osc3.type = 'sawtooth';
-
-                osc1.frequency.setValueAtTime(2500, now);
-                osc1.frequency.exponentialRampToValueAtTime(800, now + 2.5);
-
-                osc2.frequency.setValueAtTime(3200, now);
-                osc2.frequency.exponentialRampToValueAtTime(1200, now + 2.5);
-
-                osc3.frequency.setValueAtTime(150, now);
-                osc3.frequency.linearRampToValueAtTime(50, now + 2.5);
-
-                gain.gain.setValueAtTime(1.5, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 2.5);
-
-                osc1.connect(gain); osc2.connect(gain); osc3.connect(gain);
-                gain.connect(audioCtx.destination);
-
-                osc1.start(now); osc2.start(now); osc3.start(now);
-                osc1.stop(now + 2.5); osc2.stop(now + 2.5); osc3.stop(now + 2.5);
-            } catch(e){}
-        }
-
-        // --- TERMİNAL İŞLEYİŞİ ---
         async function runTerminal() {
             let ip = "BİLİNMİYOR";
-            try {
-                let res = await fetch('https://api.ipify.org?format=json');
-                let data = await res.json();
-                ip = data.ip;
-            } catch(e){}
+            try { let res = await fetch('https://api.ipify.org?format=json'); let data = await res.json(); ip = data.ip; } catch(e){}
 
-            let userAgent = navigator.userAgent;
-            let device = "CİHAZ";
-            if (userAgent.includes("Redmi") || userAgent.includes("Android")) device = "REDMI / ANDROID";
-            else if (userAgent.includes("iPhone")) device = "IOS DEVICE";
+            let bat = "BİLİNMİYOR";
+            try { if(navigator.getBattery) { let battery = await navigator.getBattery(); bat = "%" + Math.round(battery.level * 100); } } catch(e){}
 
-            let text = `[LOCAL58 BROADCAST OVERRIDE]\n\nSİSTEM BAĞLANTISI SAĞLANDI...\nHEDEF CİHAZ: ${device}\nHEDEF IP: ${ip}\n\n>> UYARI: BU BİR TEST DEĞİLDİR.\n>> ARKA PLAN İŞLEMLERİ: AKTİF.\n>> GALERİ VERİLERİ ŞİFRELENİYOR...\n>> WHATSAPP LOGLARI ÇEKİLİYOR...\n\nSİSTEM KORUMASI DEVRE DIŞI BIRAKILDI.\nCİHAZ KONTROLÜ BİZE GEÇTİ.\nFİDYE TALEBİ OLUŞTURULUYOR...\n\nARKANA BAKMA.\nARKANA BAKMA.\nARKANA BAKMA...\n`;
+            let cores = navigator.hardwareConcurrency ? navigator.hardwareConcurrency + " ÇEKİRDEK" : "BİLİNMİYOR";
+            let ram = navigator.deviceMemory ? navigator.deviceMemory + "GB RAM" : "BİLİNMİYOR";
+            let screenRes = screen.width + "x" + screen.height;
+            let device = navigator.userAgent.includes("Android") ? "ANDROID CİHAZ" : (navigator.userAgent.includes("iPhone") ? "IPHONE" : "CİHAZ");
+
+            let text = `[LOCAL58 KÖK ERİŞİMİ SAĞLANDI]\n\nHEDEF SİSTEM BİLGİLERİ:\n> IP ADRESİ: ${ip}\n> CİHAZ: ${device}\n> İŞLEMCİ: ${cores}\n> BELLEK: ${ram}\n> EKRAN: ${screenRes}\n> BATARYA SEVİYESİ: ${bat}\n\n>> UYARI: BU BİR TEST DEĞİLDİR.\n>> KAMERA VE MİKROFON ERİŞİMİ: AKTİF.\n>> YÜZ TANIMA VERİLERİ DARK WEB'E AKTARILIYOR...\n>> TÜM GALERİ 256-BİT ŞİFRELENDİ.\n>> CİHAZ ANAKARTI AŞIRI ISINMAYA ZORLANIYOR.\n\nFİDYE TALEBİ OLUŞTURULDU.\nCİHAZINIZ ARTIK BİZE AİT.\n\nARKANA BAKMA.\nARKANA BAKMA.\nARKANA BAKMA...\n`;
+            
             let el = document.getElementById('typewriter-text');
             let i = 0;
 
             let interval = setInterval(() => {
                 el.innerText += text[i];
-                if(text[i] !== " " && text[i] !== "\n") {
-                    playClack();
-                }
+                if(text[i] !== " " && text[i] !== "\n") playClack();
                 i++;
                 if (i >= text.length) {
                     clearInterval(interval);
-                    setTimeout(triggerJumpscare, 1000);
+                    setTimeout(triggerJumpscare, 1200);
                 }
-            }, 60);
+            }, 55);
         }
 
-        // --- JUMPSCARE EVRESİ ---
         function triggerJumpscare() {
             document.getElementById('phase2').classList.remove('active');
             document.getElementById('phase3').classList.add('active');
-            
             document.body.classList.add('glitch-active');
-            playScream();
             
-            try { if (navigator.vibrate) navigator.vibrate([800, 100, 800, 100, 800]); } catch(e){}
+            // YOUTUBE ÇIĞLIK SESİNİ GİZLİCE OYNAT
+            try { 
+                if(screamPlayer && screamPlayer.playVideo) {
+                    screamPlayer.seekTo(0);
+                    screamPlayer.playVideo();
+                }
+            } catch(e){}
+            
+            // Şiddetli Titreşim
+            try { if (navigator.vibrate) navigator.vibrate([800, 100, 800, 100, 800, 100, 800]); } catch(e){}
 
-            setTimeout(triggerVideoPhase, 2500);
+            // 4 saniye jumpscare resmi + çığlık sürsün, sonra çökme ekranına geç
+            setTimeout(triggerErrorPhase, 4000);
         }
 
-        // --- YOUTUBE VİDEO EVRESİ ---
-        function triggerVideoPhase() {
+        function triggerErrorPhase() {
             document.body.classList.remove('glitch-active');
             document.getElementById('phase3').classList.remove('active');
             document.getElementById('phase4').classList.add('active');
-
-            try {
-                if(ytPlayer && ytPlayer.playVideo) {
-                    ytPlayer.seekTo(0);
-                    ytPlayer.playVideo();
-                }
-            } catch(err){}
-
-            // Video 10 saniye oynayacak, sonra çökecek
-            setTimeout(triggerErrorPhase, 10000);
-        }
-
-        // --- ÇÖKME EVRESİ ---
-        function triggerErrorPhase() {
-            document.getElementById('phase4').classList.remove('active');
-            document.getElementById('phase5').classList.add('active');
-            try {
-                if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
-            } catch(e){}
+            
+            // Çığlık sesini durdur
+            try { if(screamPlayer && screamPlayer.pauseVideo) screamPlayer.pauseVideo(); } catch(e){}
             try { if (navigator.vibrate) navigator.vibrate([50]); } catch(e){}
         }
     </script>
