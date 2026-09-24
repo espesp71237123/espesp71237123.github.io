@@ -2,105 +2,103 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <!-- Önbellek (Cache) temizleme etiketleri - Eski sürümün yüklenmesini engeller -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sürpriz!</title>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <title>SİSTEM HATASI</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
-        html, body { width: 100%; height: 100%; background: #000; overflow: hidden; font-family: 'Share Tech Mono', monospace; }
+        html, body { width: 100%; height: 100%; background: #000; overflow: hidden; font-family: 'VT323', monospace; }
         
-        /* Tüm ekranı kaplayan devasa dokunma alanı */
+        /* ANALOG TV / VHS EFEKTİ */
+        .crt-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 6px 100%; z-index: 999999; pointer-events: none;
+        }
+
+        /* EVRE 1: Ürkütücü Giriş */
         #phase1 {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: #ffb6c1; display: flex; justify-content: center;
-            align-items: center; z-index: 9999999; cursor: pointer;
-        }
-        
-        .pink-btn {
-            width: 80%; height: 120px; font-size: 32px; font-weight: bold;
-            color: #fff; background-color: #ff1493; border: 4px solid #fff;
-            border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            display: flex; justify-content: center; align-items: center;
-            pointer-events: none; /* Tıklama doğrudan arka plana geçsin */
+            background-color: #050505; display: flex; justify-content: center;
+            align-items: center; z-index: 9999998; cursor: pointer; color: #777;
+            font-size: 24px; text-shadow: 0 0 5px #fff; text-align: center;
         }
 
         .phase { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; }
         .active { display: flex !important; flex-direction: column; }
 
-        /* Hacker Terminali */
-        #phase2 { background-color: #020000; padding: 20px; z-index: 888888; }
-        .terminal-box { width: 100%; height: 100%; border: 1px solid rgba(255,0,0,0.4); padding: 15px; background: rgba(10,0,0,0.9); overflow-y: auto; }
-        .typewriter { font-size: 16px; line-height: 1.5; font-weight: bold; color: #ff0000; white-space: pre-wrap; word-break: break-all; text-shadow: 0 0 8px #ff0000; }
+        /* EVRE 2: Terminal / Fidye */
+        #phase2 { background-color: #000; padding: 20px; z-index: 888888; }
+        .terminal-box { width: 100%; height: 100%; overflow-y: auto; padding-top: 10px; }
+        .typewriter { font-size: 22px; line-height: 1.2; color: #ff2a2a; white-space: pre-wrap; word-break: break-all; text-shadow: 2px 0 2px rgba(255,0,0,0.8), -2px 0 2px rgba(0,0,255,0.8); }
 
-        /* Resim Jumpscare */
+        /* EVRE 3: Boiled One Jumpscare */
         #phase3 { background-color: #000; z-index: 777777; justify-content: center; align-items: center; }
-        .jumpscare-img { width: 100%; height: 100%; object-fit: cover; filter: contrast(200%); }
+        .jumpscare-img { width: 100%; height: 100%; object-fit: cover; filter: contrast(250%) saturate(150%) brightness(80%); mix-blend-mode: hard-light; }
 
-        /* Video Jumpscare */
-        #phase4 { background-color: #000; z-index: 666666; justify-content: center; align-items: center; }
-        #jump-video { width: 100vw; height: 100vh; object-fit: cover; }
+        /* EVRE 4: YouTube Videosu */
+        #phase4 { background-color: #000; z-index: 666666; justify-content: center; align-items: center; overflow: hidden; }
+        #yt-player { width: 100vw; height: 100vh; pointer-events: none; border: none; transform: scale(1.35); }
 
-        /* Sahte Çökme Ekranı */
-        #phase5 { background: #fff; color: #333; font-family: sans-serif; padding: 40px 20px; z-index: 555555; align-items: flex-start; justify-content: flex-start; }
+        /* EVRE 5: Sahte Çökme Ekranı */
+        #phase5 { background: #202124; color: #bdc1c6; font-family: sans-serif; padding: 40px 20px; z-index: 555555; align-items: flex-start; justify-content: flex-start; }
         .chrome-error { max-width: 600px; margin: 0 auto; text-align: left; }
-        .chrome-error h1 { font-size: 24px; color: #202124; margin-bottom: 15px; font-weight: normal; }
-        .chrome-error p { font-size: 15px; color: #5f6368; line-height: 1.5; margin-bottom: 10px; }
-        .chrome-error ul { margin-left: 20px; color: #5f6368; font-size: 15px; margin-bottom: 20px; }
-        .chrome-error li { margin-bottom: 5px; }
-        .chrome-error .error-code { font-size: 12px; color: #70757a; margin-top: 30px; letter-spacing: 0.5px; }
+        .chrome-error h1 { font-size: 24px; color: #e8eaed; margin-bottom: 15px; font-weight: normal; }
+        .chrome-error p { font-size: 15px; line-height: 1.5; margin-bottom: 10px; }
+        .chrome-error .error-code { font-size: 12px; color: #80868b; margin-top: 30px; }
 
-        /* Ekran Titreme Efekti */
-        @keyframes hardGlitch {
-            0% { transform: translate(0) }
-            20% { transform: translate(-10px, 10px) }
-            40% { transform: translate(-10px, -10px) }
-            60% { transform: translate(10px, 10px) }
-            80% { transform: translate(10px, -10px) }
-            100% { transform: translate(0) }
+        /* Glitch Animasyonu */
+        @keyframes heavyGlitch {
+            0% { transform: translate(0) scale(1); filter: hue-rotate(0deg); }
+            20% { transform: translate(-20px, 15px) scale(1.05); filter: hue-rotate(90deg) invert(1); }
+            40% { transform: translate(20px, -15px) scale(1); filter: hue-rotate(180deg); }
+            60% { transform: translate(-10px, 20px) scale(1.1); filter: hue-rotate(270deg) invert(1); }
+            80% { transform: translate(15px, -10px) scale(1.05); filter: hue-rotate(360deg); }
+            100% { transform: translate(0) scale(1); }
         }
-        .hard-glitch-active { animation: hardGlitch 0.05s infinite; }
+        .glitch-active { animation: heavyGlitch 0.1s infinite; }
+
+        @keyframes textBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .blinking { animation: textBlink 1.5s infinite; }
     </style>
+    <!-- YouTube API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
 
-    <!-- EVRE 1: İlk Tıklama Ekranı -->
+    <div class="crt-overlay"></div>
+
+    <!-- EVRE 1: Ürkütücü Giriş -->
     <div id="phase1" onclick="startPrank(event)" ontouchstart="startPrank(event)">
-        <div class="pink-btn">DOKUN! ✨</div>
+        <div class="blinking">[ BAĞLANTIYI KURMAK İÇİN DOKUNUN ]</div>
     </div>
 
-    <!-- EVRE 2: Hacker Terminali -->
+    <!-- EVRE 2: Terminal -->
     <div id="phase2" class="phase">
         <div class="terminal-box">
             <div id="typewriter-text" class="typewriter"></div>
         </div>
     </div>
 
-    <!-- EVRE 3: Resim Jumpscare -->
+    <!-- EVRE 3: Boiled One -->
     <div id="phase3" class="phase">
-        <img class="jumpscare-img" src="The_Boiled_One.jpg" onerror="this.src='The_Boiled_One.JPG'" alt="Jumpscare">
+        <img class="jumpscare-img" src="The_Boiled_One.jpg" alt="BOILED">
     </div>
 
-    <!-- EVRE 4: Video Jumpscare -->
+    <!-- EVRE 4: YouTube Video Evresi -->
     <div id="phase4" class="phase">
-        <video id="jump-video" playsinline>
-            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
-        </video>
+        <div id="yt-player"></div>
     </div>
 
     <!-- EVRE 5: Hata Ekranı -->
     <div id="phase5" class="phase">
         <div class="chrome-error">
-            <h1>Bu siteye ulaşılamıyor</h1>
-            <p><strong>espesp71237123.github.io</strong> bağlantıyı beklenmedik şekilde kapattı.</p>
-            <p>Aşağıdakileri deneyin:</p>
-            <ul>
-                <li>Bağlantınızı kontrol edin</li>
-                <li>Sistemi yeniden başlatın</li>
-            </ul>
+            <h1>Aw, Snap!</h1>
+            <p>Something went wrong while displaying this webpage.</p>
+            <p>Memory integrity compromised. Forced shutdown initiated to prevent hardware damage.</p>
             <div class="error-code">ERR_CRASHED_BY_SYSTEM</div>
         </div>
     </div>
@@ -108,51 +106,91 @@
     <script>
         let started = false;
         let audioCtx;
-        let videoEl;
+        let ytPlayer;
 
-        // Tüm sistemi başlatan tek fonksiyon
+        // YouTube Oyuncusunu Hazırla
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('yt-player', {
+                videoId: 'mXTYvRf3qew',
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'fs': 0,
+                    'modestbranding': 1,
+                    'rel': 0,
+                    'playsinline': 1
+                }
+            });
+        }
+
         function startPrank(e) {
-            if (e) e.preventDefault(); // Çift tıklama/dokunma hatasını engeller
+            if (e) e.preventDefault();
             if (started) return;
             started = true;
 
-            // Ses sistemini (Scream için) telefonun kilidinden çıkar
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 if (audioCtx.state === 'suspended') audioCtx.resume();
             } catch(err){}
 
-            // Video sistemini telefonun kilidinden çıkar (Sessizce başlatıp durduruyoruz)
+            // YouTube izin kilidini kullanıcı dokunmasıyla aç
             try {
-                videoEl = document.getElementById('jump-video');
-                videoEl.muted = false; 
-                videoEl.load();
+                if(ytPlayer && ytPlayer.playVideo) {
+                    ytPlayer.playVideo();
+                    ytPlayer.pauseVideo();
+                }
             } catch(err){}
 
-            // Titreşim
-            try { if (navigator.vibrate) navigator.vibrate([100]); } catch(err){}
+            // Dızzzt Sesi ve Ekran Kırılması (Analog Glitch)
+            playDizzzt();
+            document.body.classList.add('glitch-active');
+            try { if (navigator.vibrate) navigator.vibrate([200, 50, 200]); } catch(err){}
 
-            // Ekranları Değiştir
-            document.getElementById('phase1').style.display = 'none';
-            document.getElementById('phase2').classList.add('active');
-
-            // Terminali Başlat
-            runTerminal();
+            // 0.6 saniye kaos sonra terminale geçiş
+            setTimeout(() => {
+                document.body.classList.remove('glitch-active');
+                document.getElementById('phase1').style.display = 'none';
+                document.getElementById('phase2').classList.add('active');
+                runTerminal();
+            }, 600);
         }
 
-        function playKeySound() {
+        // --- SES MOTORLARI ---
+        function playDizzzt() {
+            try {
+                if(!audioCtx) return;
+                let bufferSize = audioCtx.sampleRate * 0.5;
+                let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                let data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                let noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+                let gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                noise.connect(gain);
+                gain.connect(audioCtx.destination);
+                noise.start();
+            } catch(e){}
+        }
+
+        function playClack() {
             try {
                 if(!audioCtx) return;
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(800 + Math.random() * 400, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.03);
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.03);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
                 osc.start();
-                osc.stop(audioCtx.currentTime + 0.05);
+                osc.stop(audioCtx.currentTime + 0.03);
             } catch(e){}
         }
 
@@ -162,107 +200,102 @@
                 let now = audioCtx.currentTime;
                 let osc1 = audioCtx.createOscillator();
                 let osc2 = audioCtx.createOscillator();
+                let osc3 = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
 
                 osc1.type = 'sawtooth';
                 osc2.type = 'square';
+                osc3.type = 'sawtooth';
 
-                osc1.frequency.setValueAtTime(3000, now);
-                osc1.frequency.exponentialRampToValueAtTime(150, now + 3.0);
+                osc1.frequency.setValueAtTime(2500, now);
+                osc1.frequency.exponentialRampToValueAtTime(800, now + 2.5);
 
-                osc2.frequency.setValueAtTime(2500, now);
-                osc2.frequency.exponentialRampToValueAtTime(100, now + 3.0);
+                osc2.frequency.setValueAtTime(3200, now);
+                osc2.frequency.exponentialRampToValueAtTime(1200, now + 2.5);
 
-                gain.gain.setValueAtTime(1.0, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 3.0);
+                osc3.frequency.setValueAtTime(150, now);
+                osc3.frequency.linearRampToValueAtTime(50, now + 2.5);
 
-                osc1.connect(gain);
-                osc2.connect(gain);
+                gain.gain.setValueAtTime(1.5, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 2.5);
+
+                osc1.connect(gain); osc2.connect(gain); osc3.connect(gain);
                 gain.connect(audioCtx.destination);
 
-                osc1.start(now);
-                osc2.start(now);
-                osc1.stop(now + 3.0);
-                osc2.stop(now + 3.0);
+                osc1.start(now); osc2.start(now); osc3.start(now);
+                osc1.stop(now + 2.5); osc2.stop(now + 2.5); osc3.stop(now + 2.5);
             } catch(e){}
         }
 
+        // --- TERMİNAL İŞLEYİŞİ ---
         async function runTerminal() {
-            let ip = "192.168.1.104";
-            // Gerçek IP'yi çekmeyi dener
+            let ip = "BİLİNMİYOR";
             try {
                 let res = await fetch('https://api.ipify.org?format=json');
                 let data = await res.json();
                 ip = data.ip;
             } catch(e){}
 
-            // Redmi veya iPhone algılama
             let userAgent = navigator.userAgent;
-            let device = "CİHAZ SIZILDI";
-            if (userAgent.includes("Redmi") || userAgent.includes("Android")) device = "REDMI/ANDROID (SİSTEM SIZILDI)";
-            else if (userAgent.includes("iPhone")) device = "IOS (SİSTEM SIZILDI)";
+            let device = "CİHAZ";
+            if (userAgent.includes("Redmi") || userAgent.includes("Android")) device = "REDMI / ANDROID";
+            else if (userAgent.includes("iPhone")) device = "IOS DEVICE";
 
-            let screenRes = `${window.screen.width}x${window.screen.height}`;
-
-            let text = `root@system:~# BREACH INITIATED...\n[!] ACCESS GRANTED\n\n> IP: ${ip}\n> CİHAZ: ${device}\n> EKRAN: ${screenRes} px\n\n[ERROR] KİŞİSEL VERİLER İNDİRİLİYOR...\nGALERİ ŞİFRELENDİ.\n\nSİSTEM KİLİTLENDİ! %100...`;
+            let text = `[LOCAL58 BROADCAST OVERRIDE]\n\nSİSTEM BAĞLANTISI SAĞLANDI...\nHEDEF CİHAZ: ${device}\nHEDEF IP: ${ip}\n\n>> UYARI: BU BİR TEST DEĞİLDİR.\n>> ARKA PLAN İŞLEMLERİ: AKTİF.\n>> GALERİ VERİLERİ ŞİFRELENİYOR...\n>> WHATSAPP LOGLARI ÇEKİLİYOR...\n\nSİSTEM KORUMASI DEVRE DIŞI BIRAKILDI.\nCİHAZ KONTROLÜ BİZE GEÇTİ.\nFİDYE TALEBİ OLUŞTURULUYOR...\n\nARKANA BAKMA.\nARKANA BAKMA.\nARKANA BAKMA...\n`;
             let el = document.getElementById('typewriter-text');
             let i = 0;
 
             let interval = setInterval(() => {
                 el.innerText += text[i];
-                playKeySound();
+                if(text[i] !== " " && text[i] !== "\n") {
+                    playClack();
+                }
                 i++;
                 if (i >= text.length) {
                     clearInterval(interval);
-                    // Yazı bitince resme geç (Yarım saniye bekle)
-                    setTimeout(triggerImagePhase, 500);
+                    setTimeout(triggerJumpscare, 1000);
                 }
-            }, 40); // Yazı hızı
+            }, 60);
         }
 
-        function triggerImagePhase() {
+        // --- JUMPSCARE EVRESİ ---
+        function triggerJumpscare() {
             document.getElementById('phase2').classList.remove('active');
             document.getElementById('phase3').classList.add('active');
-            document.body.classList.add('hard-glitch-active'); // Ekran sarsıntısı
-
-            playScream(); // Çığlık sesi
             
-            // Telefonda uzun titreşim
-            try { if (navigator.vibrate) navigator.vibrate([1000, 100, 1000]); } catch(e){}
+            document.body.classList.add('glitch-active');
+            playScream();
+            
+            try { if (navigator.vibrate) navigator.vibrate([800, 100, 800, 100, 800]); } catch(e){}
 
-            // Resim 3 saniye ekranda kalacak, sonra video başlayacak
-            setTimeout(triggerVideoPhase, 3000);
+            setTimeout(triggerVideoPhase, 2500);
         }
 
+        // --- YOUTUBE VİDEO EVRESİ ---
         function triggerVideoPhase() {
-            document.body.classList.remove('hard-glitch-active');
+            document.body.classList.remove('glitch-active');
             document.getElementById('phase3').classList.remove('active');
             document.getElementById('phase4').classList.add('active');
 
             try {
-                videoEl.currentTime = 0;
-                let playPromise = videoEl.play();
-                
-                // Eğer tarayıcı videoyu engellerse direkt hata ekranına at
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        triggerErrorPhase();
-                    });
+                if(ytPlayer && ytPlayer.playVideo) {
+                    ytPlayer.seekTo(0);
+                    ytPlayer.playVideo();
                 }
-            } catch(err) {
-                triggerErrorPhase();
-            }
-            
-            // Video 5 saniye oynasın, sonra hata ekranına geçsin (ya da video bitince)
-            videoEl.onended = triggerErrorPhase;
-            setTimeout(triggerErrorPhase, 5000);
+            } catch(err){}
+
+            // Video 10 saniye oynayacak, sonra çökecek
+            setTimeout(triggerErrorPhase, 10000);
         }
 
+        // --- ÇÖKME EVRESİ ---
         function triggerErrorPhase() {
             document.getElementById('phase4').classList.remove('active');
             document.getElementById('phase5').classList.add('active');
-            // Videoyu durdur
-            try { videoEl.pause(); } catch(e){}
+            try {
+                if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
+            } catch(e){}
+            try { if (navigator.vibrate) navigator.vibrate([50]); } catch(e){}
         }
     </script>
 </body>
