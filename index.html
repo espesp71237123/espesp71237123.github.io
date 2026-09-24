@@ -2,100 +2,104 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <!-- Önbellek (Cache) temizleme etiketleri - Eski sürümün yüklenmesini engeller -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sürpriz!</title>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         html, body { width: 100%; height: 100%; background: #000; overflow: hidden; font-family: 'Share Tech Mono', monospace; }
         
-        /* EVRE 1: DOKUNMA YUTMAYAN DEVASA BUTON */
+        /* Tüm ekranı kaplayan devasa dokunma alanı */
         #phase1 {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: #ffb6c1; display: flex; justify-content: center;
-            align-items: center; z-index: 9999999;
+            align-items: center; z-index: 9999999; cursor: pointer;
         }
         
         .pink-btn {
-            width: 80%; height: 120px; font-size: 28px; font-weight: bold;
+            width: 80%; height: 120px; font-size: 32px; font-weight: bold;
             color: #fff; background-color: #ff1493; border: 4px solid #fff;
             border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            cursor: pointer; display: flex; justify-content: center; align-items: center;
+            display: flex; justify-content: center; align-items: center;
+            pointer-events: none; /* Tıklama doğrudan arka plana geçsin */
         }
 
-        .phase { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .active { display: flex !important; }
+        .phase { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; }
+        .active { display: flex !important; flex-direction: column; }
 
-        /* CRT EFEKTİ */
-        .scanlines {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.08), rgba(0, 255, 0, 0.03), rgba(0, 0, 255, 0.08));
-            z-index: 999; background-size: 100% 3px, 6px 100%; pointer-events: none; opacity: 0.9;
-        }
-
-        /* EVRE 2: Hacker Terminal */
-        #phase2 { background-color: #020000; color: #ff0000; padding: 20px; align-items: flex-start; justify-content: flex-start; text-align: left; z-index: 888888; }
+        /* Hacker Terminali */
+        #phase2 { background-color: #020000; padding: 20px; z-index: 888888; }
         .terminal-box { width: 100%; height: 100%; border: 1px solid rgba(255,0,0,0.4); padding: 15px; background: rgba(10,0,0,0.9); overflow-y: auto; }
-        .typewriter { font-size: 14px; line-height: 1.4; font-weight: bold; color: #ff0000; white-space: pre-wrap; word-break: break-all; text-shadow: 0 0 8px #ff0000; }
+        .typewriter { font-size: 16px; line-height: 1.5; font-weight: bold; color: #ff0000; white-space: pre-wrap; word-break: break-all; text-shadow: 0 0 8px #ff0000; }
 
-        /* EVRE 3: Jumpscare Resim */
-        #phase3 { background-color: #000; z-index: 777777; }
+        /* Resim Jumpscare */
+        #phase3 { background-color: #000; z-index: 777777; justify-content: center; align-items: center; }
         .jumpscare-img { width: 100%; height: 100%; object-fit: cover; filter: contrast(200%); }
 
-        /* EVRE 4: Video Jumpscare */
-        #phase4 { background-color: #000; z-index: 666666; }
+        /* Video Jumpscare */
+        #phase4 { background-color: #000; z-index: 666666; justify-content: center; align-items: center; }
         #jump-video { width: 100vw; height: 100vh; object-fit: cover; }
 
-        /* EVRE 5: Hata Ekranı */
-        #phase5 { background: #fff; color: #333; font-family: sans-serif; text-align: left; padding: 40px 20px; justify-content: flex-start; z-index: 555555; }
-        .chrome-error { max-width: 600px; margin: 0 auto; }
-        .chrome-error h1 { font-size: 22px; color: #5f6368; margin-bottom: 15px; }
-        .chrome-error p { font-size: 14px; color: #5f6368; line-height: 1.5; margin-bottom: 10px; }
-        .chrome-error .error-code { font-size: 11px; color: #5f6368; margin-top: 30px; }
+        /* Sahte Çökme Ekranı */
+        #phase5 { background: #fff; color: #333; font-family: sans-serif; padding: 40px 20px; z-index: 555555; align-items: flex-start; justify-content: flex-start; }
+        .chrome-error { max-width: 600px; margin: 0 auto; text-align: left; }
+        .chrome-error h1 { font-size: 24px; color: #202124; margin-bottom: 15px; font-weight: normal; }
+        .chrome-error p { font-size: 15px; color: #5f6368; line-height: 1.5; margin-bottom: 10px; }
+        .chrome-error ul { margin-left: 20px; color: #5f6368; font-size: 15px; margin-bottom: 20px; }
+        .chrome-error li { margin-bottom: 5px; }
+        .chrome-error .error-code { font-size: 12px; color: #70757a; margin-top: 30px; letter-spacing: 0.5px; }
 
+        /* Ekran Titreme Efekti */
         @keyframes hardGlitch {
-            0% { clip-path: inset(40% 0 61% 0); transform: skew(0.8deg) translate(-15px, 5px); }
-            50% { clip-path: inset(10% 0 80% 0); transform: skew(2deg) translate(-25px, 15px); }
-            100% { clip-path: inset(0% 0 0% 0); transform: skew(0deg) translate(0); }
+            0% { transform: translate(0) }
+            20% { transform: translate(-10px, 10px) }
+            40% { transform: translate(-10px, -10px) }
+            60% { transform: translate(10px, 10px) }
+            80% { transform: translate(10px, -10px) }
+            100% { transform: translate(0) }
         }
-        .hard-glitch-active { animation: hardGlitch 0.03s infinite alternate; }
+        .hard-glitch-active { animation: hardGlitch 0.05s infinite; }
     </style>
 </head>
-<body class="scanlines">
+<body>
 
-    <!-- EVRE 1 -->
-    <div id="phase1">
-        <div class="pink-btn" id="startBtn" onclick="runPrank()" ontouchstart="runPrank()">DOKUN! ✨</div>
+    <!-- EVRE 1: İlk Tıklama Ekranı -->
+    <div id="phase1" onclick="startPrank(event)" ontouchstart="startPrank(event)">
+        <div class="pink-btn">DOKUN! ✨</div>
     </div>
 
-    <!-- EVRE 2 -->
+    <!-- EVRE 2: Hacker Terminali -->
     <div id="phase2" class="phase">
         <div class="terminal-box">
             <div id="typewriter-text" class="typewriter"></div>
         </div>
     </div>
 
-    <!-- EVRE 3 -->
+    <!-- EVRE 3: Resim Jumpscare -->
     <div id="phase3" class="phase">
         <img class="jumpscare-img" src="The_Boiled_One.jpg" onerror="this.src='The_Boiled_One.JPG'" alt="Jumpscare">
     </div>
 
-    <!-- EVRE 4 -->
+    <!-- EVRE 4: Video Jumpscare -->
     <div id="phase4" class="phase">
-        <video id="jump-video" preload="auto" playsinline>
+        <video id="jump-video" playsinline>
             <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
         </video>
     </div>
 
-    <!-- EVRE 5 -->
+    <!-- EVRE 5: Hata Ekranı -->
     <div id="phase5" class="phase">
         <div class="chrome-error">
-            <h1>Bu siteye erişilemiyor</h1>
-            <p><strong>espesp71237123.github.io</strong> yanıt vermeyi reddetti.</p>
+            <h1>Bu siteye ulaşılamıyor</h1>
+            <p><strong>espesp71237123.github.io</strong> bağlantıyı beklenmedik şekilde kapattı.</p>
             <p>Aşağıdakileri deneyin:</p>
             <ul>
-                <li>Bağlantıyı kontrol etme</li>
-                <li>Sistem belleğini ve ağ ayarlarını temizleme</li>
+                <li>Bağlantınızı kontrol edin</li>
+                <li>Sistemi yeniden başlatın</li>
             </ul>
             <div class="error-code">ERR_CRASHED_BY_SYSTEM</div>
         </div>
@@ -104,22 +108,36 @@
     <script>
         let started = false;
         let audioCtx;
+        let videoEl;
 
-        function runPrank() {
+        // Tüm sistemi başlatan tek fonksiyon
+        function startPrank(e) {
+            if (e) e.preventDefault(); // Çift tıklama/dokunma hatasını engeller
             if (started) return;
             started = true;
 
+            // Ses sistemini (Scream için) telefonun kilidinden çıkar
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 if (audioCtx.state === 'suspended') audioCtx.resume();
-            } catch(e){}
+            } catch(err){}
 
-            try { if (navigator.vibrate) navigator.vibrate([300, 100, 500]); } catch(e){}
+            // Video sistemini telefonun kilidinden çıkar (Sessizce başlatıp durduruyoruz)
+            try {
+                videoEl = document.getElementById('jump-video');
+                videoEl.muted = false; 
+                videoEl.load();
+            } catch(err){}
 
+            // Titreşim
+            try { if (navigator.vibrate) navigator.vibrate([100]); } catch(err){}
+
+            // Ekranları Değiştir
             document.getElementById('phase1').style.display = 'none';
             document.getElementById('phase2').classList.add('active');
 
-            startTerminal();
+            // Terminali Başlat
+            runTerminal();
         }
 
         function playKeySound() {
@@ -127,14 +145,14 @@
                 if(!audioCtx) return;
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(800 + Math.random() * 600, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(800 + Math.random() * 400, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
                 osc.start();
-                osc.stop(audioCtx.currentTime + 0.03);
+                osc.stop(audioCtx.currentTime + 0.05);
             } catch(e){}
         }
 
@@ -149,11 +167,11 @@
                 osc1.type = 'sawtooth';
                 osc2.type = 'square';
 
-                osc1.frequency.setValueAtTime(3500, now);
-                osc1.frequency.exponentialRampToValueAtTime(100, now + 3.0);
+                osc1.frequency.setValueAtTime(3000, now);
+                osc1.frequency.exponentialRampToValueAtTime(150, now + 3.0);
 
-                osc2.frequency.setValueAtTime(3200, now);
-                osc2.frequency.exponentialRampToValueAtTime(80, now + 3.0);
+                osc2.frequency.setValueAtTime(2500, now);
+                osc2.frequency.exponentialRampToValueAtTime(100, now + 3.0);
 
                 gain.gain.setValueAtTime(1.0, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 3.0);
@@ -169,23 +187,24 @@
             } catch(e){}
         }
 
-        async function startTerminal() {
+        async function runTerminal() {
             let ip = "192.168.1.104";
+            // Gerçek IP'yi çekmeyi dener
             try {
                 let res = await fetch('https://api.ipify.org?format=json');
                 let data = await res.json();
                 ip = data.ip;
             } catch(e){}
 
+            // Redmi veya iPhone algılama
             let userAgent = navigator.userAgent;
             let device = "CİHAZ SIZILDI";
-            if (userAgent.includes("Android")) device = "ANDROID (SİSTEM SIZILDI)";
+            if (userAgent.includes("Redmi") || userAgent.includes("Android")) device = "REDMI/ANDROID (SİSTEM SIZILDI)";
             else if (userAgent.includes("iPhone")) device = "IOS (SİSTEM SIZILDI)";
 
             let screenRes = `${window.screen.width}x${window.screen.height}`;
-            let cores = navigator.hardwareConcurrency || "8";
 
-            let text = `root@kernel:~# INITIALIZING BREACH...\n[!] ACCESS: FULL\n\n> IP: ${ip}\n> CİHAZ: ${device}\n> EKRAN: ${screenRes} px\n> İŞLEMCİ: ${cores} Core\n\n[ERROR] KİŞİSEL VERİLER SIZDIRILIYOR...\nDOSYALAR ŞİFRELENDİ.\n\nSİSTEM KİLİTLENDİ! %100`;
+            let text = `root@system:~# BREACH INITIATED...\n[!] ACCESS GRANTED\n\n> IP: ${ip}\n> CİHAZ: ${device}\n> EKRAN: ${screenRes} px\n\n[ERROR] KİŞİSEL VERİLER İNDİRİLİYOR...\nGALERİ ŞİFRELENDİ.\n\nSİSTEM KİLİTLENDİ! %100...`;
             let el = document.getElementById('typewriter-text');
             let i = 0;
 
@@ -195,50 +214,55 @@
                 i++;
                 if (i >= text.length) {
                     clearInterval(interval);
-                    setTimeout(triggerImageJumpscare, 600);
+                    // Yazı bitince resme geç (Yarım saniye bekle)
+                    setTimeout(triggerImagePhase, 500);
                 }
-            }, 30);
+            }, 40); // Yazı hızı
         }
 
-        function triggerImageJumpscare() {
+        function triggerImagePhase() {
             document.getElementById('phase2').classList.remove('active');
             document.getElementById('phase3').classList.add('active');
-            document.body.classList.add('hard-glitch-active');
+            document.body.classList.add('hard-glitch-active'); // Ekran sarsıntısı
 
-            playScream();
-            try { if (navigator.vibrate) navigator.vibrate([1000, 50, 1000]); } catch(e){}
+            playScream(); // Çığlık sesi
+            
+            // Telefonda uzun titreşim
+            try { if (navigator.vibrate) navigator.vibrate([1000, 100, 1000]); } catch(e){}
 
-            // 3 saniye resim durduktan sonra videoya geç
-            setTimeout(triggerVideoJumpscare, 3000);
+            // Resim 3 saniye ekranda kalacak, sonra video başlayacak
+            setTimeout(triggerVideoPhase, 3000);
         }
 
-        function triggerVideoJumpscare() {
+        function triggerVideoPhase() {
             document.body.classList.remove('hard-glitch-active');
             document.getElementById('phase3').classList.remove('active');
             document.getElementById('phase4').classList.add('active');
 
-            let vid = document.getElementById('jump-video');
-            vid.volume = 1.0;
-            
-            let playPromise = vid.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    // Video engellenirse doğrudan son evre olan hata ekranına geç
-                    showErrorScreen();
-                });
+            try {
+                videoEl.currentTime = 0;
+                let playPromise = videoEl.play();
+                
+                // Eğer tarayıcı videoyu engellerse direkt hata ekranına at
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        triggerErrorPhase();
+                    });
+                }
+            } catch(err) {
+                triggerErrorPhase();
             }
-
-            vid.onended = function() {
-                showErrorScreen();
-            };
             
-            // Videoyu 8 saniye oynatıp çökme ekranına ver
-            setTimeout(showErrorScreen, 8000);
+            // Video 5 saniye oynasın, sonra hata ekranına geçsin (ya da video bitince)
+            videoEl.onended = triggerErrorPhase;
+            setTimeout(triggerErrorPhase, 5000);
         }
 
-        function showErrorScreen() {
+        function triggerErrorPhase() {
             document.getElementById('phase4').classList.remove('active');
             document.getElementById('phase5').classList.add('active');
+            // Videoyu durdur
+            try { videoEl.pause(); } catch(e){}
         }
     </script>
 </body>
