@@ -12,14 +12,12 @@
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         html, body { width: 100%; height: 100%; background: #000; overflow: hidden; font-family: 'VT323', monospace; }
         
-        /* CRT Ekran Çizgi Efekti */
         .crt-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 4px, 6px 100%; z-index: 999999; pointer-events: none;
         }
 
-        /* EVRE 1: Başlangıç Dokunma Ekranı */
         #phase1 {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: #050505; display: flex; justify-content: center;
@@ -30,7 +28,7 @@
         .phase { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; }
         .active { display: flex !important; flex-direction: column; }
 
-        /* EVRE 2: Terminal / Fidye Ekranı */
+        /* EVRE 2: Terminal / Fidye */
         #phase2 { background-color: #000; padding: 20px; z-index: 888888; }
         .terminal-box { width: 100%; height: 100%; overflow-y: auto; padding-top: 10px; }
         .typewriter { font-size: 22px; line-height: 1.2; color: #ff2a2a; white-space: pre-wrap; word-break: break-all; text-shadow: 2px 0 2px rgba(255,0,0,0.8), -2px 0 2px rgba(0,0,255,0.8); }
@@ -39,17 +37,20 @@
         #phase3 { background-color: #000; z-index: 777777; justify-content: center; align-items: center; position: relative; }
         .jumpscare-img { width: 100%; height: 100%; object-fit: cover; filter: contrast(250%) saturate(150%) brightness(80%); mix-blend-mode: hard-light; }
 
-        /* Arka Planda Görünmez Çığlık Oynatıcısı */
+        /* Gizli Çığlık Ses Oynatıcısı */
         #scream-box { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; overflow: hidden; }
 
-        /* EVRE 4: Sahte Çökme Ekranı */
-        #phase4 { background: #202124; color: #bdc1c6; font-family: sans-serif; padding: 40px 20px; z-index: 555555; align-items: flex-start; justify-content: flex-start; }
+        /* EVRE 4: YouTube Korku Videosu */
+        #phase4 { background-color: #000; z-index: 666666; justify-content: center; align-items: center; overflow: hidden; }
+        #yt-player { width: 100vw; height: 100vh; pointer-events: none; border: none; transform: scale(1.35); }
+
+        /* EVRE 5: Sahte Çökme Ekranı */
+        #phase5 { background: #202124; color: #bdc1c6; font-family: sans-serif; padding: 40px 20px; z-index: 555555; align-items: flex-start; justify-content: flex-start; }
         .chrome-error { max-width: 600px; margin: 0 auto; text-align: left; }
         .chrome-error h1 { font-size: 24px; color: #e8eaed; margin-bottom: 15px; font-weight: normal; }
         .chrome-error p { font-size: 15px; line-height: 1.5; margin-bottom: 10px; }
         .chrome-error .error-code { font-size: 12px; color: #80868b; margin-top: 30px; }
 
-        /* Glitch Animasyonu */
         @keyframes heavyGlitch {
             0% { transform: translate(0) scale(1); filter: hue-rotate(0deg); }
             20% { transform: translate(-20px, 15px) scale(1.05); filter: hue-rotate(90deg) invert(1); }
@@ -68,24 +69,24 @@
 
     <div class="crt-overlay"></div>
 
-    <!-- 1. Evre -->
     <div id="phase1" onclick="startPrank(event)" ontouchstart="startPrank(event)">
         <div class="blinking">[ BAĞLANTIYI KURMAK İÇİN DOKUNUN ]</div>
     </div>
 
-    <!-- 2. Evre -->
     <div id="phase2" class="phase">
         <div class="terminal-box"><div id="typewriter-text" class="typewriter"></div></div>
     </div>
 
-    <!-- 3. Evre: Resim ve Gizli Ses -->
     <div id="phase3" class="phase">
         <img class="jumpscare-img" src="resim.jpg" alt="Jumpscare">
         <div id="scream-box"><div id="scream-player"></div></div>
     </div>
 
-    <!-- 4. Evre: Sahte Çökme -->
     <div id="phase4" class="phase">
+        <div id="yt-player"></div>
+    </div>
+
+    <div id="phase5" class="phase">
         <div class="chrome-error">
             <h1>Aw, Snap!</h1>
             <p>Something went wrong while displaying this webpage.</p>
@@ -97,21 +98,20 @@
     <script>
         let started = false;
         let audioCtx;
+        let ytPlayer;
         let screamPlayer;
 
-        // YouTube Iframe API
         function onYouTubeIframeAPIReady() {
+            // Gizli Çığlık Ses Oynatıcısı (Afton Scream)
             screamPlayer = new YT.Player('scream-player', {
-                videoId: 'c_mpavBpZlA', // Gönderdiğin Shorts videosunun ID'si (Çığlık Sesi)
-                playerVars: { 
-                    'autoplay': 0, 
-                    'controls': 0, 
-                    'disablekb': 1, 
-                    'fs': 0, 
-                    'modestbranding': 1, 
-                    'rel': 0, 
-                    'playsinline': 1 
-                }
+                videoId: 'c_mpavBpZlA',
+                playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1, 'fs': 0, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 }
+            });
+
+            // Sonda Çıkan Görünür Korku Videosu (Boiled One)
+            ytPlayer = new YT.Player('yt-player', {
+                videoId: 'mXTYvRf3qew',
+                playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1, 'fs': 0, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 }
             });
         }
 
@@ -125,12 +125,10 @@
                 if (audioCtx.state === 'suspended') audioCtx.resume();
             } catch(err){}
 
-            // Kullanıcı dokunduğu an tarayıcının ses engellerini kaldırıyoruz
+            // Dokunma anında iki oynatıcının da ses/video iznini açıyoruz
             try {
-                if(screamPlayer && screamPlayer.playVideo) { 
-                    screamPlayer.playVideo(); 
-                    screamPlayer.pauseVideo(); 
-                }
+                if(screamPlayer && screamPlayer.playVideo) { screamPlayer.playVideo(); screamPlayer.pauseVideo(); }
+                if(ytPlayer && ytPlayer.playVideo) { ytPlayer.playVideo(); ytPlayer.pauseVideo(); }
             } catch(err){}
 
             playDizzzt();
@@ -209,7 +207,7 @@
             document.getElementById('phase3').classList.add('active');
             document.body.classList.add('glitch-active');
             
-            // YOUTUBE ÇIĞLIK SESİNİ GİZLİCE OYNAT
+            // YOUTUBE'DAKİ ÇIĞLIK SESİNİ GİZLİCE BAŞLAT
             try { 
                 if(screamPlayer && screamPlayer.playVideo) {
                     screamPlayer.seekTo(0);
@@ -217,20 +215,31 @@
                 }
             } catch(e){}
             
-            // Şiddetli Titreşim
-            try { if (navigator.vibrate) navigator.vibrate([800, 100, 800, 100, 800, 100, 800]); } catch(e){}
+            try { if (navigator.vibrate) navigator.vibrate([800, 100, 800, 100, 800]); } catch(e){}
 
-            // 4 saniye jumpscare resmi + çığlık sürsün, sonra çökme ekranına geç
-            setTimeout(triggerErrorPhase, 4000);
+            // 2.5 Saniye Çığlık + Resim Göster, Sonra Uzun Video Fazına Geç
+            setTimeout(triggerVideoPhase, 2500);
         }
 
-        function triggerErrorPhase() {
+        function triggerVideoPhase() {
+            // Çığlığı durdur
+            try { if(screamPlayer && screamPlayer.pauseVideo) screamPlayer.pauseVideo(); } catch(e){}
+
             document.body.classList.remove('glitch-active');
             document.getElementById('phase3').classList.remove('active');
             document.getElementById('phase4').classList.add('active');
-            
-            // Çığlık sesini durdur
-            try { if(screamPlayer && screamPlayer.pauseVideo) screamPlayer.pauseVideo(); } catch(e){}
+
+            // Korku Videosunu (Boiled One) Oynat
+            try { if(ytPlayer && ytPlayer.playVideo) { ytPlayer.seekTo(0); ytPlayer.playVideo(); } } catch(err){}
+
+            // UZATILMIŞ SÜRE: Eski 16 saniye yerine tam 35 saniye boyunca videoda kalacak!
+            setTimeout(triggerErrorPhase, 35000);
+        }
+
+        function triggerErrorPhase() {
+            document.getElementById('phase4').classList.remove('active');
+            document.getElementById('phase5').classList.add('active');
+            try { if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo(); } catch(e){}
             try { if (navigator.vibrate) navigator.vibrate([50]); } catch(e){}
         }
     </script>
