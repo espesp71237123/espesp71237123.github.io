@@ -37,9 +37,8 @@
 
         #scream-box { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; overflow: hidden; }
 
-        /* EVRE 4: Garanti YouTube Oynatıcı (Direkt Iframe Entegrasyonu) */
         #phase4 { background-color: #000; z-index: 666666; justify-content: center; align-items: center; overflow: hidden; }
-        #direct-video { width: 100vw; height: 100vh; border: none; transform: scale(1.35); pointer-events: none; }
+        #yt-player { width: 100vw; height: 100vh; border: none; transform: scale(1.35); }
 
         #phase5 { background: #202124; color: #bdc1c6; font-family: sans-serif; padding: 40px 20px; z-index: 555555; align-items: flex-start; justify-content: flex-start; }
         .chrome-error { max-width: 600px; margin: 0 auto; text-align: left; }
@@ -79,8 +78,7 @@
     </div>
 
     <div id="phase4" class="phase">
-        <!-- Buraya doğrudan yüklenen garanti iframe koyuyoruz -->
-        <iframe id="direct-video" src="" allow="autoplay"></iframe>
+        <div id="yt-player"></div>
     </div>
 
     <div id="phase5" class="phase">
@@ -95,13 +93,18 @@
     <script>
         let started = false;
         let audioCtx;
+        let ytPlayer;
         let screamPlayer;
 
         function onYouTubeIframeAPIReady() {
-            // Sadece gizli çığlık için API kullanıyoruz
             screamPlayer = new YT.Player('scream-player', {
                 videoId: 'c_mpavBpZlA',
                 playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1, 'fs': 0, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 }
+            });
+
+            ytPlayer = new YT.Player('yt-player', {
+                videoId: 'mXTYvRf3qew',
+                playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1, 'fs': 0, 'modestbranding': 1, 'rel': 0, 'playsinline': 1, 'iv_load_policy': 3 }
             });
         }
 
@@ -117,6 +120,7 @@
 
             try {
                 if(screamPlayer && screamPlayer.playVideo) { screamPlayer.playVideo(); screamPlayer.pauseVideo(); }
+                if(ytPlayer && ytPlayer.playVideo) { ytPlayer.playVideo(); ytPlayer.pauseVideo(); }
             } catch(err){}
 
             playDizzzt();
@@ -214,20 +218,22 @@
             document.getElementById('phase3').classList.remove('active');
             document.getElementById('phase4').classList.add('active');
 
-            // Doğrudan iframe src'sineautoplay vererek yüklüyoruz, havada kalma ihtimali sıfır!
-            let iframe = document.getElementById('direct-video');
-            iframe.src = "https://www.youtube.com/embed/mXTYvRf3qew?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&playsinline=1";
+            // Videoyu kesin başlatmak için hem unMute hem playVideo tetikliyoruz
+            try { 
+                if(ytPlayer) {
+                    ytPlayer.unMute();
+                    ytPlayer.seekTo(0);
+                    ytPlayer.playVideo();
+                } 
+            } catch(err){}
 
-            // 35 saniye boyunca videoyu oynatıp sonra çökme ekranına atacak
             setTimeout(triggerErrorPhase, 35000);
         }
 
         function triggerErrorPhase() {
             document.getElementById('phase4').classList.remove('active');
             document.getElementById('phase5').classList.add('active');
-            
-            // Videoyu tamamen kapatmak için src'yi boşaltıyoruz
-            document.getElementById('direct-video').src = "";
+            try { if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo(); } catch(e){}
             try { if (navigator.vibrate) navigator.vibrate([50]); } catch(e){}
         }
     </script>
