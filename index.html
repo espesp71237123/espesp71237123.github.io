@@ -125,7 +125,6 @@
                 if (audioCtx.state === 'suspended') audioCtx.resume();
             } catch(err){}
 
-            // Dokunma anında iki oynatıcının da ses/video iznini açıyoruz
             try {
                 if(screamPlayer && screamPlayer.playVideo) { screamPlayer.playVideo(); screamPlayer.pauseVideo(); }
                 if(ytPlayer && ytPlayer.playVideo) { ytPlayer.playVideo(); ytPlayer.pauseVideo(); }
@@ -207,7 +206,7 @@
             document.getElementById('phase3').classList.add('active');
             document.body.classList.add('glitch-active');
             
-            // YOUTUBE'DAKİ ÇIĞLIK SESİNİ GİZLİCE BAŞLAT
+            // Gizli Çığlığı Patlat
             try { 
                 if(screamPlayer && screamPlayer.playVideo) {
                     screamPlayer.seekTo(0);
@@ -217,22 +216,21 @@
             
             try { if (navigator.vibrate) navigator.vibrate([800, 100, 800, 100, 800]); } catch(e){}
 
-            // 2.5 Saniye Çığlık + Resim Göster, Sonra Uzun Video Fazına Geç
+            // 2.5 Saniye Sonra Uzun Korku Videosuna Geç
             setTimeout(triggerVideoPhase, 2500);
         }
 
         function triggerVideoPhase() {
-            // Çığlığı durdur
             try { if(screamPlayer && screamPlayer.pauseVideo) screamPlayer.pauseVideo(); } catch(e){}
 
             document.body.classList.remove('glitch-active');
             document.getElementById('phase3').classList.remove('active');
             document.getElementById('phase4').classList.add('active');
 
-            // Korku Videosunu (Boiled One) Oynat
+            // Doctor Nowhere Videosunu Oynat
             try { if(ytPlayer && ytPlayer.playVideo) { ytPlayer.seekTo(0); ytPlayer.playVideo(); } } catch(err){}
 
-            // UZATILMIŞ SÜRE: Eski 16 saniye yerine tam 35 saniye boyunca videoda kalacak!
+            // 35 Saniye Boyunca Kurbana İzlet
             setTimeout(triggerErrorPhase, 35000);
         }
 
