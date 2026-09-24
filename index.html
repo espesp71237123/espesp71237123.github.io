@@ -6,16 +6,25 @@
     <title>Sürpriz!</title>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
-        body, html { width: 100%; height: 100%; background-color: #000; font-family: 'Share Tech Mono', monospace; overflow: hidden; color: #ff0000; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; background: #000; overflow: hidden; font-family: 'Share Tech Mono', monospace; }
         
-        .phase { display: none; width: 100%; height: 100%; position: fixed; top: 0; left: 0; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .active { display: flex !important; }
+        /* EVRE 1: DOKUNMA YUTMAYAN DEVASA BUTON */
+        #phase1 {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #ffb6c1; display: flex; justify-content: center;
+            align-items: center; z-index: 9999999;
+        }
+        
+        .pink-btn {
+            width: 80%; height: 120px; font-size: 28px; font-weight: bold;
+            color: #fff; background-color: #ff1493; border: 4px solid #fff;
+            border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            cursor: pointer; display: flex; justify-content: center; align-items: center;
+        }
 
-        /* EVRE 1: Pembe Buton */
-        #phase1 { background-color: #ffb6c1; z-index: 999999; }
-        .pink-btn { padding: 40px 80px; font-size: 32px; font-weight: bold; color: #fff; background-color: #ff1493; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); outline: none; -webkit-tap-highlight-color: transparent; }
-        .pink-btn:active { transform: scale(0.92); }
+        .phase { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .active { display: flex !important; }
 
         /* CRT EFEKTİ */
         .scanlines {
@@ -25,41 +34,38 @@
         }
 
         /* EVRE 2: Hacker Terminal */
-        #phase2 { background-color: #020000; color: #ff0000; padding: 20px; align-items: flex-start; justify-content: flex-start; text-align: left; z-index: 99999; }
-        .terminal-box { width: 100%; height: 100%; border: 1px solid rgba(255,0,0,0.4); padding: 15px; background: rgba(10,0,0,0.9); box-shadow: inset 0 0 20px #ff000033; overflow-y: auto; }
-        .typewriter { font-size: 15px; line-height: 1.4; font-weight: bold; text-shadow: 0 0 8px #ff0000, 2px 0 #000; white-space: pre-wrap; word-break: break-all; }
+        #phase2 { background-color: #020000; color: #ff0000; padding: 20px; align-items: flex-start; justify-content: flex-start; text-align: left; z-index: 888888; }
+        .terminal-box { width: 100%; height: 100%; border: 1px solid rgba(255,0,0,0.4); padding: 15px; background: rgba(10,0,0,0.9); overflow-y: auto; }
+        .typewriter { font-size: 14px; line-height: 1.4; font-weight: bold; color: #ff0000; white-space: pre-wrap; word-break: break-all; text-shadow: 0 0 8px #ff0000; }
 
         /* EVRE 3: Jumpscare Resim */
-        #phase3 { background-color: #000; z-index: 99999; }
-        .jumpscare-img { width: 100%; height: 100%; object-fit: cover; filter: contrast(220%) brightness(110%); }
+        #phase3 { background-color: #000; z-index: 777777; }
+        .jumpscare-img { width: 100%; height: 100%; object-fit: cover; filter: contrast(200%); }
 
         /* EVRE 4: Video Jumpscare */
-        #phase4 { background-color: #000; z-index: 99999; }
+        #phase4 { background-color: #000; z-index: 666666; }
         #jump-video { width: 100vw; height: 100vh; object-fit: cover; }
 
         /* EVRE 5: Hata Ekranı */
-        #phase5 { background: #fff; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: left; padding: 40px 20px; justify-content: flex-start; z-index: 99999; }
+        #phase5 { background: #fff; color: #333; font-family: sans-serif; text-align: left; padding: 40px 20px; justify-content: flex-start; z-index: 555555; }
         .chrome-error { max-width: 600px; margin: 0 auto; }
-        .chrome-error h1 { font-size: 22px; color: #5f6368; margin-bottom: 15px; font-weight: 500; }
+        .chrome-error h1 { font-size: 22px; color: #5f6368; margin-bottom: 15px; }
         .chrome-error p { font-size: 14px; color: #5f6368; line-height: 1.5; margin-bottom: 10px; }
-        .chrome-error .error-code { font-size: 11px; color: #5f6368; margin-top: 30px; text-transform: uppercase; }
+        .chrome-error .error-code { font-size: 11px; color: #5f6368; margin-top: 30px; }
 
         @keyframes hardGlitch {
-            0% { clip-path: inset(40% 0 61% 0); transform: skew(0.8deg) translate(-15px, 5px); filter: invert(0) hue-rotate(0deg) contrast(300%); }
-            20% { clip-path: inset(10% 0 80% 0); transform: skew(2deg) translate(-25px, 15px); filter: contrast(500%) brightness(150%); }
-            40% { clip-path: inset(25% 0 58% 0); transform: skew(1.5deg) translate(-10px, 20px); filter: hue-rotate(90deg); }
-            60% { clip-path: inset(5% 0 90% 0); transform: skew(3deg) translate(-20px, 10px); filter: contrast(400%); }
-            80% { clip-path: inset(15% 0 70% 0); transform: skew(2deg) translate(-15px, 5px); filter: invert(0); }
-            100% { clip-path: inset(0% 0 0% 0); transform: skew(0deg) translate(0); filter: invert(0); }
+            0% { clip-path: inset(40% 0 61% 0); transform: skew(0.8deg) translate(-15px, 5px); }
+            50% { clip-path: inset(10% 0 80% 0); transform: skew(2deg) translate(-25px, 15px); }
+            100% { clip-path: inset(0% 0 0% 0); transform: skew(0deg) translate(0); }
         }
-        .hard-glitch-active { animation: hardGlitch 0.02s infinite alternate; }
+        .hard-glitch-active { animation: hardGlitch 0.03s infinite alternate; }
     </style>
 </head>
 <body class="scanlines">
 
     <!-- EVRE 1 -->
-    <div id="phase1" class="phase active">
-        <button class="pink-btn" id="startBtn">DOKUN! ✨</button>
+    <div id="phase1">
+        <div class="pink-btn" id="startBtn" onclick="runPrank()" ontouchstart="runPrank()">DOKUN! ✨</div>
     </div>
 
     <!-- EVRE 2 -->
@@ -96,38 +102,45 @@
     </div>
 
     <script>
+        let started = false;
         let audioCtx;
 
-        function initAudio() {
+        function runPrank() {
+            if (started) return;
+            started = true;
+
             try {
-                if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
             } catch(e){}
+
+            try { if (navigator.vibrate) navigator.vibrate([300, 100, 500]); } catch(e){}
+
+            document.getElementById('phase1').style.display = 'none';
+            document.getElementById('phase2').classList.add('active');
+
+            startTerminal();
         }
 
         function playKeySound() {
             try {
-                initAudio();
+                if(!audioCtx) return;
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(900 + Math.random() * 800, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.025);
+                osc.frequency.setValueAtTime(800 + Math.random() * 600, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
                 osc.start();
-                osc.stop(audioCtx.currentTime + 0.025);
+                osc.stop(audioCtx.currentTime + 0.03);
             } catch(e){}
         }
 
-        function playDistortedScream() {
+        function playScream() {
             try {
-                initAudio();
+                if(!audioCtx) return;
                 let now = audioCtx.currentTime;
                 let osc1 = audioCtx.createOscillator();
                 let osc2 = audioCtx.createOscillator();
@@ -136,10 +149,10 @@
                 osc1.type = 'sawtooth';
                 osc2.type = 'square';
 
-                osc1.frequency.setValueAtTime(4500, now);
+                osc1.frequency.setValueAtTime(3500, now);
                 osc1.frequency.exponentialRampToValueAtTime(100, now + 3.0);
 
-                osc2.frequency.setValueAtTime(4200, now);
+                osc2.frequency.setValueAtTime(3200, now);
                 osc2.frequency.exponentialRampToValueAtTime(80, now + 3.0);
 
                 gain.gain.setValueAtTime(1.0, now);
@@ -156,32 +169,7 @@
             } catch(e){}
         }
 
-        const btn = document.getElementById('startBtn');
-        
-        function handleStart(e) {
-            if(e) e.preventDefault();
-            initAudio();
-            
-            try { if (navigator.vibrate) navigator.vibrate([400, 100, 400, 100, 800]); } catch(err){}
-            
-            document.body.classList.add('hard-glitch-active');
-            
-            setTimeout(async () => {
-                document.body.classList.remove('hard-glitch-active');
-                switchPhase('phase1', 'phase2');
-                await runTypewriter();
-            }, 600);
-        }
-
-        btn.addEventListener('click', handleStart);
-        btn.addEventListener('touchstart', handleStart);
-
-        function switchPhase(from, to) {
-            document.getElementById(from).classList.remove('active');
-            document.getElementById(to).classList.add('active');
-        }
-
-        async function runTypewriter() {
+        async function startTerminal() {
             let ip = "192.168.1.104";
             try {
                 let res = await fetch('https://api.ipify.org?format=json');
@@ -190,15 +178,14 @@
             } catch(e){}
 
             let userAgent = navigator.userAgent;
-            let device = "CİHAZ ALGINLANDI";
-            if (userAgent.includes("Android")) device = "ANDROID (CİHAZ SIZILDI)";
-            else if (userAgent.includes("iPhone")) device = "IOS (CİHAZ SIZILDI)";
+            let device = "CİHAZ SIZILDI";
+            if (userAgent.includes("Android")) device = "ANDROID (SİSTEM SIZILDI)";
+            else if (userAgent.includes("iPhone")) device = "IOS (SİSTEM SIZILDI)";
 
             let screenRes = `${window.screen.width}x${window.screen.height}`;
             let cores = navigator.hardwareConcurrency || "8";
-            let lang = navigator.language || "tr-TR";
 
-            let text = `root@kernel:~# INITIALIZING MALWARE BREACH...\n[!] ROOT SYSTEM ACCESS: FULL\n\n> HEDEF IP: ${ip}\n> DONANIM: ${device}\n> EKRAN BİLGİSİ: ${screenRes} px\n> İŞLEMCİ ÇEKİRDEK: ${cores} Core\n> SİSTEM DİLİ: ${lang}\n> KONUM: HASSAS TESPİT YAPILDI.\n\n[CRITICAL ERROR] KİŞİSEL VERİLER SIZDIRILIYOR...\nRESETHOST_KEY... ENCRYPTED.\n\nSİSTEM KİLİTLENDİ! %100`;
+            let text = `root@kernel:~# INITIALIZING BREACH...\n[!] ACCESS: FULL\n\n> IP: ${ip}\n> CİHAZ: ${device}\n> EKRAN: ${screenRes} px\n> İŞLEMCİ: ${cores} Core\n\n[ERROR] KİŞİSEL VERİLER SIZDIRILIYOR...\nDOSYALAR ŞİFRELENDİ.\n\nSİSTEM KİLİTLENDİ! %100`;
             let el = document.getElementById('typewriter-text');
             let i = 0;
 
@@ -208,24 +195,27 @@
                 i++;
                 if (i >= text.length) {
                     clearInterval(interval);
-                    setTimeout(triggerImageJumpscare, 800);
+                    setTimeout(triggerImageJumpscare, 600);
                 }
-            }, 25);
+            }, 30);
         }
 
         function triggerImageJumpscare() {
-            switchPhase('phase2', 'phase3');
+            document.getElementById('phase2').classList.remove('active');
+            document.getElementById('phase3').classList.add('active');
             document.body.classList.add('hard-glitch-active');
-            
-            playDistortedScream();
-            try { if (navigator.vibrate) navigator.vibrate([1500, 50, 1500, 50, 1500]); } catch(err){}
 
+            playScream();
+            try { if (navigator.vibrate) navigator.vibrate([1000, 50, 1000]); } catch(e){}
+
+            // 3 saniye resim durduktan sonra videoya geç
             setTimeout(triggerVideoJumpscare, 3000);
         }
 
         function triggerVideoJumpscare() {
             document.body.classList.remove('hard-glitch-active');
-            switchPhase('phase3', 'phase4');
+            document.getElementById('phase3').classList.remove('active');
+            document.getElementById('phase4').classList.add('active');
 
             let vid = document.getElementById('jump-video');
             vid.volume = 1.0;
@@ -233,19 +223,22 @@
             let playPromise = vid.play();
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
-                    // Video oynatılmazsa direkt hata ekranına geç
-                    switchPhase('phase4', 'phase5');
+                    // Video engellenirse doğrudan son evre olan hata ekranına geç
+                    showErrorScreen();
                 });
             }
 
             vid.onended = function() {
-                switchPhase('phase4', 'phase5');
+                showErrorScreen();
             };
             
-            // Maksimum 10 saniye video oynatıp hata ekranına geç
-            setTimeout(() => {
-                switchPhase('phase4', 'phase5');
-            }, 10000);
+            // Videoyu 8 saniye oynatıp çökme ekranına ver
+            setTimeout(showErrorScreen, 8000);
+        }
+
+        function showErrorScreen() {
+            document.getElementById('phase4').classList.remove('active');
+            document.getElementById('phase5').classList.add('active');
         }
     </script>
 </body>
